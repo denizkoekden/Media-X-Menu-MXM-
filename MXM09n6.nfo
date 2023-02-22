@@ -1,0 +1,92 @@
+October 31 2003
+
+Media X Menu 0.9n.6
+
+Please stop by the forums at Xbox-Scene.com to report any issues in the MXM forum.
+
+Tutorials located at:  http://www.writersgallery.com/MXM/TUT
+
+Short Version-
+[*] Revamped the FTP Server. Again.
+[*] More ActionScript stuff.
+[*] "Big F:" on X2 BIOSes problem fixed
+[*] Added more variations of Simplicity "internal" skin
+
+See below for complete list.
+
+
+Beta 0.9n.6 (Bug Fixes)
+[*] Added experimental automatic G: fix
+    If drive F: is not between 128GB and 132GB, MXM will not automatically mount G:
+[*] Failing that, there is now an MXM_Patcher option to force MXM not to init G:
+[*] SETFUNC::FILESIZE should now return directory size now.
+[*] New ActionScript commands:
+    BEGINSEARCH <WildCardPath>
+    - The local variables "search_name", "search_path", "search_arg", "search_size", "search_type", "search_active" (which equals "1" when the search values are OK) are updated during the search
+    SEARCHITEM <VarName>   (Load VarName with current file/pathname)
+    SEARCHSIZE <VarName>   (Load VarName with current file size)
+    SEARCHTYPE <VarName>   (Load VarName with current type for entry - "file" or "dir")
+    SEARCHNEXT
+    ENDSEARCH
+    MEDIAPATCH <FilePath> (Experimental, patches media flag and media check code)
+    INPUT [NOWAIT] (Added optional "nowait" parameter, which prevents it from waiting forinput)
+    OPENREAD <HandleName> <FilePath>
+    OPENWRITE <HandleName> <FilePath>
+    READFILELN <HandleName> <VarName> (Reads line and loads variable)
+    WRITEFILELN <HandleName> <Text> (Writes line with text and appends CR/LF)
+    WRITEFILE <HandleName> <Text> (Writes line with text)
+    CLOSEFILE <HandleName>
+    FILESTAT <HandleName> <VarName> (If file access is OK, value will be "1" - for read, "0" means end - otherwise "")
+    WEBFILEFETCH <Filename> <URL>  (A little goodie... but this is a very basic HTTP client, so it won't work with all sites)
+    SETFUNC new:
+     - FNBASENAME <FilePath>
+     - FNEXTENSION <FilePath>
+     - FNPATH <FilePath>
+     - FNMERGE <Path> <Filename> [<Extension>]
+     - FATXIFY <filename> [<replacementchar>] (Do not use with a full path! backslashes and colons will be removed!!)
+     - TEMPFILE <Path> <Prefix> (Creates a new temporary filename)
+     - REPLACE <Old> <New> <Source>
+     - ContextScriptExists <ScriptName>
+     - ScriptExists <ScriptName>
+    XMLOpen <HandleName> <FileName>
+    - Opens an XML file or internal XML link (::MXM, ::PREFS, ::MENUCACHE, ::MENU, ::Internal)
+    XMLSave <HandleName> [<FileName>]
+    - Saves XML back out to a given file
+    XMLSaveNode <HandleName> <FileName>
+    - Save current selected node to file (File must not exist)
+    XMLSetNodePtr <HandleName> <Node> [OnFail <Label>]
+    - Set the current node pointer
+    - To start from "root" use ! Example: !.FTPServer.User:1    (Accesses second user node in FTPServer node of a config file)
+    XMLCreateNode <HandleName> <Node> [OnFail <Label>]
+    XMLCreateElement <HandleName> <Element> [OnFail <Label>]
+    XMLSetElementPtr <HandleName> <Element> [OnFail <Label>]
+    - Must be relative to currently set node, or this will also cause the current node to change
+    XMLSetElementValue <HandleName> <Value>
+    XMLSetElementAttr <HandleValue> <Attribute> <Value>
+    XMLSetNodeAttr <HandleValue> <Attribute> <Value>
+    XMLSetValue <HandleValue> <Location> <Value> [<AttrPref>]
+    XMLGetValue <HandleValue> <VarName> <Location> [<DefaultValue>]
+    XMLGetNodeCount <HandleName> <VarName> [<Name>]
+    XMLGetElementCount <HandleName> <VarName> [<Name>]
+    XMLGetNodeAttrCount <HandleName> <VarName>
+    XMLGetElementAttrCount <HandleName> <VarName>
+    XMLCreate <HandleName> <MainNodeName>
+    LoadCurrent
+    CallContextScript <ScriptName>
+[*] Fixed issue with submenu conditional
+[*] ActionScripts now run in their own thread, meaning the video and audio continue while ActionScripts run. This will be further exploited in the future with scheduled and event-driven execution.
+[*] Fixed File access error in ActionScript FILE functions.
+[*] Added new Text Gadget source: ENV - this gives the skinner access to the global environment (Environment variables prefixed with the "_" character)
+    Define the "Key" attribute to select an environment variable to display (without the % on each side, with or without the underscore)
+[*] Rewrote the ActionScripting engine. This will be getting a slight re-arrangement when I incoroporate the scheduler, which is more or less written.
+[*] Added $timer$ 'special' ActionScript variable, which gives a running count of milliseconds
+[*] Added _GP_ANYBUTTON variable set by input for simple testing.
+[*] Fixed non-working string functions and issue with XMLSetValue when setting attributes
+[*] Fixed spurious file entries when connected to M$ Internet Explorer via FTP. This might fix other issues (I hope).
+[*] Added DNS cacheing. This may solve some issues with newsfeeds, but if edited, the cache file can make DNS lookups more efficient!
+    In the file, you can set a hostname as one of three types of persistence: dynamic (always looks up IP), session (Looks up IP once per session) and static (you can 'permanently' assign an IP)
+    If the cached IP doesn't work, MXM will try and get another one, no matter what.
+[*] Changed the FTP Server again.... should be working again.
+[*] Added jlm5151's Simplicity Remix skins as internal skins.
+[*] Added more specials: $tm_time$, $tm_date$, $tm_hours$, $tm_minutes$, $tm_seconds$, $tm_year$, $tm_month$, $tm_day$ - all based on current time. Format for date: DD/MM/YYYY and time: HH:MM:SS. Individual units are 2 digits (or for year, 4 digit)
+[*] Fixed issue that prevented "RandomSource" enabled image resources from working properly.

@@ -1,0 +1,5090 @@
+<Internal>
+<BinTree>
+<CppHeading>
+// MXM Internal Config File Data
+// Use BinTree to convert the internal.xml file into THIS file.
+// Automatic settings have been included in the XML to generate the
+// Prefix and BaseName, so those fields do not require anything in them.
+#include &lt;xtl.h&gt;
+#include "mxm.h"
+</CppHeading>
+<HHeading>
+// MXM Internal Config File Header
+// Use BinTree to convert the internal.xml file into THIS file.
+// Automatic settings have been included in the XML to generate the
+// Prefix and BaseName, so those fields do not require anything in them.
+</HHeading>
+<prefix>IntCfg</prefix>
+<basename>Internal</basename>
+</BinTree>
+<AutoMenus>
+ <Menu Name="By Drives">
+  <SubMenu>
+   <Title>E Drive...</Title>
+   <Description>SubMenu</Description>
+   <SortField>title</SortField>
+   <Item>
+    <AutoDir>E:\</AutoDir>
+   </Item>
+  </SubMenu>
+  <SubMenu>
+   <Title>F Drive...</Title>
+   <Description>SubMenu</Description>
+   <Item>
+    <AutoDir>F:\</AutoDir>
+   </Item>
+  </SubMenu>
+  <SubMenu>
+   <Title>G Drive...</Title>
+   <Description>SubMenu</Description>
+   <Item>
+    <AutoDir>G:\</AutoDir>
+   </Item>
+  </SubMenu>
+ </Menu>
+ <Menu Name="Apps and Games">
+  <SubMenu>
+   <Title>Apps...</Title>
+   <Description>SubMenu</Description>
+   <SortField>title</SortField>
+   <Item>
+    <AutoDir>E:\APPS</AutoDir>
+   </Item>
+   <Item>
+    <AutoDir>F:\APPS</AutoDir>
+   </Item>
+   <Item>
+    <AutoDir>G:\APPS</AutoDir>
+   </Item>
+  </SubMenu>
+  <SubMenu>
+   <Title>Games...</Title>
+   <Description>SubMenu</Description>
+   <Item>
+    <AutoDir>E:\GAMES</AutoDir>
+   </Item>
+   <Item>
+    <AutoDir>F:\GAMES</AutoDir>
+   </Item>
+   <Item>
+    <AutoDir>G:\GAMES</AutoDir>
+   </Item>
+   <Item>
+    <AutoDir>E:\HDDLoader</AutoDir>
+   </Item>
+   <Item>
+    <AutoDir>F:\HDDLoader</AutoDir>
+   </Item>
+   <Item>
+    <AutoDir>G:\HDDLoader</AutoDir>
+   </Item>
+  </SubMenu>
+ </Menu>
+</AutoMenus>
+<Scripts>
+<ActionScript name="_XMLTest">
+XMLOPEN TestXML ::MXM
+XMLSetNodePtr TestXML !.FTPServer.User
+XMLGetNodePtr TestXML XMLPtr
+XMLGetValue TestXML User1Name !.FTPServer.User:0.Name
+XMLGetValue TestXML User2Name !.FTPServer.User:1.Name
+XMLGetValue TestXML User1Pass !.FTPServer.User:0.Password
+XMLGetValue TestXML User2Pass !.FTPServer.User:1.Password
+CallScript _DisplayMessageBox "XMLNode Pointer=(%XMLPtr%)$eol$1)%User1Name% / %User1Pass%$eol$2)%User2Name% / %User2Pass%"
+XMLSetNodePtr TestXML !.FTPServer
+XMLGetNodeCount TestXML NewUser
+XMLCreateNode TestXML User
+XMLSetValue TestXML !.FTPServer.User:%NewUser%.Name Action
+XMLSetValue TestXML !.FTPServer.User:%NewUser%.Name.Attr "AnAttribute" true
+XMLSetValue TestXML !.FTPServer.User:%NewUser%.Password Script
+XMLSave TestXML Z:\Check.xml
+XMLCLOSE TestXML
+</ActionScript>
+<ActionScript name="_TestScript">
+Set SecCount $timer$
+Add SecCount 10000
+:TIMELOOP
+Set TimeTillDone %SecCount%
+Sub TimeTillDone $timer$
+Div TimeTillDone 1000
+CallScript _RenderMessageBox "Timer: %TimeTillDone%"
+SET _GP_ANYBUTTON ""
+input nowait
+IF %_GP_ANYBUTTON% GOTO SKIPTIMERTEST
+IF# %SecCount% > $timer$ GOTO TIMELOOP
+:SKIPTIMERTEST
+CallScript _ClearDisplay
+CallScript _XMLTest
+BEGINSEARCH t*
+:TOP
+SEARCHTYPE s_type
+SEARCHITEM s_name
+SEARCHSIZE s_size
+IF %s_type% == "dir" GOTO SHOWDIR
+IF %s_type% == "file" GOTO SHOWFILE
+GOTO DONESEARCH
+:SHOWDIR
+CallScript _DisplayMessageBox "Directory Found: %s_name%"
+SEARCHNEXT
+GOTO TOP
+:SHOWFILE
+CallScript _DisplayMessageBox "File Found: %s_name%$eol$%s_size% bytes"
+SEARCHNEXT
+GOTO TOP
+:DONESEARCH
+ENDSEARCH
+SET BadFatx "007 : Agent Under Fire\*?What What?"
+SETFUNC FatX1 FatXify %BadFatx%
+SETFUNC FatX2 FatXify %BadFatx% _
+SETFUNC FatX3 FatXify %BadFatx% *
+SETFUNC Left3 Left 3 %BadFatx%
+SETFUNC Right3 Right 3 %BadFatx%
+SETFUNC Mid5 Mid 6 5 %BadFatx%
+CallScript _DisplayMessageBox "\"%BadFatx%\" has been turned into:$eol$\"%FatX1%\"$eol$\"%FatX2%\"$eol$\"%FatX3%\"$eol$(%Left3%)(%Mid5%)(%Right3%)"
+MediaPatch test.xbe
+SETFUNC TempName TEMPFILE Z:\
+CallScript _DisplayMessageBox "%TempName%"
+SETFUNC TempName TEMPFILE Z:\ PREFIX
+CallScript _DisplayMessageBox "%TempName%"
+</ActionScript>
+<ActionScript name="__DoLaunchApp">
+SET _success 1
+IF#@ ScriptExists _OnLaunch GOTO DoOnLaunchA
+GOTO NextLaunch
+:DoOnLaunchA
+CallScript _OnLaunch
+IF %_success% != 1 GOTO CANCELOP
+:NextLaunch
+IF#@ ContextScriptExists OnLaunch GOTO DoOnLaunchB
+GOTO RunApp
+:DoOnLaunchB
+CallItemScript OnLaunch
+IF %_success% != 1 GOTO CANCELOP
+:RunApp
+LaunchCurrent
+:CANCELOP
+</ActionScript>
+<ActionScript Name="_ClearDisplay">
+BeginDraw UseCurrent
+EndDraw
+</ActionScript>
+<ActionScript name="_RenderMessageBox">
+BeginDraw UseCurrent
+MessageBox %1%
+EndDraw
+</ActionScript>
+<ActionScript Name="_DisplayMessageBox">
+CallScript _RenderMessageBox %1%
+; Wait for input...
+Input
+; Clear old stuff out....
+CallScript _ClearDisplay
+</ActionScript>
+<ActionScript Name="_AutoExec">
+IF $MXMVersion$ !#^ "WIP" GOTO DONE
+Set SecCount $timer$
+Add SecCount 10000
+CallScript _RenderMessageBox "This is a WIP Release$eol$Do not distribute"
+:TIMELOOP
+SET _GP_ANYBUTTON ""
+input nowait
+IF %_GP_ANYBUTTON% GOTO SKIPTIMERTEST
+IF# %SecCount% > $timer$ GOTO TIMELOOP
+:SKIPTIMERTEST
+CallScript _ClearDisplay
+:DONE
+CallScript _CheckPrep
+</ActionScript>
+<ActionScript name="_PREPDRIVES">
+SETFUNC DrvCPres COND CDrivePresent
+SETFUNC DrvEPres COND EDrivePresent
+SETFUNC DrvFPres COND FDrivePresent
+SETFUNC DrvGPres COND GDrivePresent
+ALLOWFORMAT 1
+CallScript _DisplayMessageBox "System Will Be Prepared"
+CallScript _RenderMessageBox "Formatting Cache Partitions"
+FORMAT X:
+FORMAT Y:
+FORMAT Z:
+MOUNT X:
+MOUNT Y:
+MOUNT Z:
+CallScript _ClearDisplay
+IF %DrvGPres% != 0 GOTO SKIPG
+CallScript _DisplayMessageBox "Do you have a G: Partition to format?$eol$Press 'Y' to format G:"
+IF %_GP_Y% != "1" GOTO SKIPG
+CallScript _PromptFormat G:
+:SKIPG
+IF %DrvFPres% != 0 GOTO SKIPF
+CallScript _PromptFormat F:
+:SKIPF
+IF %DrvEPres% != 0 GOTO SKIPE
+CallScript _PromptFormat E:
+:SKIPE
+IF %DrvCPres% != 0 GOTO SKIPC
+CallScript _PromptFormat C:
+:SKIPC
+</ActionScript>
+<ActionScript name="_CheckODash">
+SETFUNC ODashPresent FileExists C:\xboxdash.xbe
+IF %ODashPresent% != 0 GOTO ODASHPRESENT
+CallScript _DisplayMessageBox "Copying MXM to C:"
+MOUNT D:
+COPY D:\default.xbe C:\xboxdash.xbe
+ATTR C:\xboxdash.xbe rw
+SETFUNC BIOSXMLPres FileExists D:\BIOSMD5.xml
+IF %BIOSXMLPres% == 0 GOTO ODASHPRESENT
+COPY D:\BIOSMD5.xml C:\BIOSMD5.xml
+ATTR C:\BIOSMD5.xml rw
+:ODASHPRESENT
+SETFUNC TDataPres FileExists E:\TDATA
+SETFUNC UDataPres FileExists E:\UDATA
+IF %TDataPres% == 1 GOTO SKIP1
+MKDIR E:\TDATA
+:SKIP1
+IF %UDataPres% == 1 GOTO SKIP2
+MKDIR E:\UDATA
+:SKIP2
+SETFUNC TDataGPres FileExists E:\TDATA\00004321
+SETFUNC UDataGPres FileExists E:\UDATA\00004321
+IF %TDataGPres% == 1 GOTO SKIP3
+MKDIR E:\TDATA\00004321
+:SKIP3
+IF %UDataGPres% == 1 GOTO SKIP4
+MKDIR E:\UDATA\00004321
+:SKIP4
+</ActionScript>
+<ActionScript name="_CHECKPREP">
+SETFUNC DrvCPres COND CDrivePresent
+SETFUNC DrvEPres COND EDrivePresent
+SETFUNC DrvFPres COND FDrivePresent
+SETFUNC DrvGPres COND GDrivePresent
+IF %_ForceRestore% == 1 GOTO PREPSYSTEM
+IF $DVD_Mode$ != 1 GOTO EPRESENT
+IF %DrvCPres% == 1 GOTO CPRESENT
+GOTO PREPSYSTEM
+:CPRESENT
+IF %DrvEPres% == 1 GOTO EPRESENT
+:PREPSYSTEM
+CallSCript _DisplayMessageBox "This drive appears to be unprepared$eol$Would you like to prepare your$eol$hard drive partitions now?$eol$Press RIGHT-TRIGGER and A to proceed$eol$Any other key"
+IF %_GP_TRG_RT% != "1" GOTO EPRESENT
+IF %_GP_A% != "1" GOTO EPRESENT
+CallScript _PREPDRIVES
+GOTO CHECKDASH
+:CHECKDASH
+CallScript _CheckODash
+GOTO CHECKRESTORE
+:CHECKRESTORE
+CallScript _PerfRestore C
+CallScript _PerfRestore E
+CallScript _PerfRestore F 1
+CallScript _PerfRestore G 1
+CallScript _DisplayMessageBox "Done with default Prepare"
+CallScript _ClearDisplay
+:EPRESENT
+</ActionScript>
+<ActionScript name="_PERFRESTORE">
+; CallScript _PerfRestore F
+SET SourceDrive D:\
+SET SourceDir %SourceDrive%%1%Backup
+SET TargetDrive %1%:\
+SETFUNC BackPresent FileExists %SourceDir%
+SETFUNC DrvPres COND %1%DrivePresent
+IF %DrvPres% != 1 GOTO DRVNOTPRESENT
+IF %BackPresent% != 1 GOTO BACKNOTPRESENT
+CallScript _DisplayMessageBox "Press 'Y' restore %TargetDrive% from %SourceDir%"
+IF %_GP_Y% != "1" GOTO END
+BeginDraw UseCurrent
+MessageBox "Copying %1% Backup$eol$Please wait"
+EndDraw
+COPY %SourceDir% %TargetDrive%
+CallScript _ClearDisplay
+BeginDraw UseCurrent
+MessageBox "Fixing Attributes$eol$Please wait"
+EndDraw
+ATTR %TargetDrive% rw
+CallScript _ClearDisplay
+GOTO END
+:DRVNOTPRESENT
+IF %2% == 1 GOTO END
+CallScript _DisplayMessageBox "Unable to copy %1%: Backup$eol$Drive not present"
+:BACKNOTPRESENT
+IF %2% == 1 GOTO END
+CallScript _DisplayMessageBox "Unable to copy %1%:$eol$ %SourceDir% not present"
+:END
+</ActionScript>
+<ActionScript name="_PROMPTFORMAT">
+; To use, CallScript _PromptFormat F:
+SETFUNC Drive UPPER %1%
+SETFUNC Drive LEFT 1 %Drive%
+IF %Drive% == C GOTO DRIVECHECK
+IF %Drive% == E GOTO DRIVECHECK
+IF %Drive% == F GOTO DRIVECHECK
+IF %Drive% == G GOTO DRIVECHECK
+GOTO SKIPCHECK
+:DRIVECHECK
+SETFUNC DrvPres COND %Drive%DrivePresent
+IF %DrvPres% != 1 GOTO SKIPCHECK
+CallScript _DisplayMessageBox "%1% Has Data!$eol$Are you sure you want to format?$eol$Press 'Y' to confirm"
+IF %_GP_Y% != "1" GOTO CANCELLED
+:SKIPCHECK
+CallScript _DisplayMessageBox "You are about to format drive %1%$eol$Are you sure?$eol$Press 'X' to confirm"
+IF %_GP_X% != "1" GOTO CANCELLED
+BeginDraw UseCurrent
+MessageBox "Formatting drive %1%$eol$Please wait"
+EndDraw
+; ALLOWFORMAT 1
+FORMAT %1%
+CallSCript _DisplayMessageBox "Drive %1% Formatted"
+Mount %1%
+GOTO END
+:CANCELLED
+CallScript _DisplayMessageBox "Drive %1% Format Cancelled"
+:END
+</ActionScript>
+<ActionScript name="_DisplayGameInfo">CallScript _DisplayMessageBox "%_GameTitle% is installed to the hard drive"</ActionScript>
+<ActionScript name="_DisplayGameInfoDVD">CallScript _DisplayMessageBox "%_GameTitle% is on the DVD"</ActionScript>
+<ActionScript name="_ClearGameSaves">CallScript _DisplayMessageBox "Clear %_GameTitle% Game Saves$eol$Not Implemented"</ActionScript>
+<ActionScript name="_DeleteApp">CallScript _DisplayMessageBox "Delete %_GameTitle%$eol$Not Implemented"</ActionScript>
+<ActionScript name="_InstallDVDApp">CallScript _DisplayMessageBox "Install %_GameTitle%$eol$Not Implemented"</ActionScript>
+</Scripts>
+<Context>
+<Item Name="About">
+<Mode>DVD</Mode>
+<Script>_DisplayGameInfoDVD</Script>
+</Item>
+<Item Name="About">
+<Mode>HD</Mode>
+<Script>_DisplayGameInfo</Script>
+</Item>
+<XItem Name="Install from DVD">
+<Mode>DVD</Mode>
+<Script>_InstallDVDApp</Script>
+</XItem>
+<XItem Name="Delete Game">
+<Mode>HD</Mode>
+<Script>_DeleteApp</Script>
+</XItem>
+<XItem Name="Clear Game Saves">
+<Script>_ClearGameSaves</Script>
+</XItem>
+</Context>
+<Skins>
+<Skin name="::Simplicity">
+  <Information>
+    <Author>masahiko</Author>
+    <Copyright>Copyright 2003</Copyright>
+    <SkinVersion>1.0</SkinVersion>
+  </Information>
+  <Delays>
+    <Title>5000</Title>
+    <Load>5000</Load>
+    <Saver>300</Saver>
+  </Delays>
+  <MessageBox>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <ShadowColor>0x00000000</ShadowColor>
+  </MessageBox>
+  <SystemMenu>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <SelectColor>0xFFFFFFFF</SelectColor>
+    <ValueColor>0xFF000000</ValueColor>
+    <SelectValueColor>0xFFFFFFFF</SelectValueColor>
+  </SystemMenu>
+  <Resource Type="Image" Name="Folder">
+    <File>::ICO_DIR</File>
+  </Resource>
+  <Resource Type="Image" Name="Lock">
+    <File>::ICO_LOCK</File>
+  </Resource>
+  <Resource name="screenshot" type="image">
+    <EntryNamed>media</EntryNamed>
+  </Resource>
+  <Layout Screen="Title">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF3E4F62</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>Loading MXM ...</Constant>
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+    </LayoutElement>
+  </Layout>
+  <Layout Screen="Menu">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF3E4F62</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="640" h="18" />
+      <Color>0xFF3A6EA5</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="380" w="640" h="18" />
+      <Color>0xFF3A6EA5</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="244" h="311" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="243" t="307" w="396" h="72" />
+      <Color>0x66FFFFFF</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="307" w="244" h="72" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="85" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="104" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="305" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="378" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="397" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="image" source="screenshot">
+      <Position l="243" t="106" w="200" h="200" />
+      <Scaling x="true" y="false" />
+      <Justify x="left" y="top" />
+      <Proportional>true</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Color>0x663A6EA5</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Color>0x663A6EA5</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Condition>ItemPrev</Condition>
+      <Color>0xFF3A6EA5</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Condition>ItemNext</Condition>
+      <Color>0xFF3A6EA5</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X="True" Y="True" />
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>MEDIA X MENU</Constant>
+      <Pos x="236" y="330" w="90"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X="True" Y="False" />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="XboxVersion">
+      <Pos x="234" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X="False" Y="True" />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="234" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X="False" Y="True" />
+      <Proportional>True</Proportional>
+      <Multi>
+        <Text>MXM </Text> 
+        <Text Source="MXMVersion" />
+      </Multi>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="IP">
+      <Pos x="234" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X="False" Y="True" />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="234" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X="False" Y="True" />
+      <Proportional>True</Proportional>
+      <Multi>
+        <Text Source="DefaultGateway" />
+        <Text> Gateway</Text> 
+      </Multi>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="234" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X="False" Y="True" />
+      <Proportional>True</Proportional>
+      <Multi>
+        <Text Source="SubnetMask" />
+        <Text> Subnet</Text> 
+      </Multi>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="ShortDriveESize">
+      <Pos x="234" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X="False" Y="True" />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="ShortDriveFSize">
+      <Pos x="234" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X="False" Y="True" />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="TempCPU">
+      <Pos x="234" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X="False" Y="True" />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="TempSys">
+      <Pos x="234" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X="False" Y="True" />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="DateTime">
+      <Pos x="234" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X="False" Y="True" />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="CurrentSubMenu">
+      <Pos x="250" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X="False" Y="True" />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Menu" Source="MXM">
+      <Pos l="247" t="310" w="327" h="65" />
+      <Scale x="false" y="false" />
+      <Thumbnails Align="left" FolderImg="Folder" PassImg="Lock">true</Thumbnails>
+      <SelPos>0</SelPos>
+      <NumItems>1</NumItems>
+      <MinimumHeight>65</MinimumHeight>
+      <SmoothScroll>True</SmoothScroll>
+      <DrawSecondary>True</DrawSecondary>
+      <ScrollFactor>3</ScrollFactor>
+      <Primary Source="Title">
+        <OffsetY>0</OffsetY>
+        <JustifyX>left</JustifyX>
+      </Primary>
+      <Secondary Source="Descr">
+        <OffsetY>0</OffsetY>
+        <JustifyX>right</JustifyX>
+      </Secondary>
+      <Selection>
+        <TextColor>0xFF000000</TextColor>
+      </Selection>
+      <UnSelItem>
+        <TextColor>0x00000000</TextColor>
+      </UnSelItem>
+    </LayoutElement>
+  </Layout>
+  <Layout Screen="Load">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF3E4F62</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+      <Multi>
+        <Text>Loading </Text> 
+        <Text Source="CGTitle" />
+        <Text> ...</Text> 
+      </Multi>
+    </LayoutElement>
+  </Layout>
+  <Layout Screen="Saver">
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X="True" Y="True" />
+      <Modifier Type="Bounce">
+        <Bounds l="0" t="0" b="480" r="640" />
+      </Modifier>
+    </LayoutElement>
+  </Layout>
+</Skin>
+<Skin name="::UyenBox3">
+<Information>
+   <Author>Oswald</Author>
+   <Copyright>No copyright claimed, copy and re-use at will</Copyright>
+   <SkinVersion>3.0</SkinVersion>
+</Information>
+<Delays>
+   <Title>0</Title>
+   <Load>4000</Load>
+   <Saver>330</Saver>
+</Delays>
+<Music>
+   <PlayRandom>On</PlayRandom>
+   <PlayGlobal>On</PlayGlobal>
+</Music>
+<MessageBox>
+   <BoxColor>0xFF999999</BoxColor>
+   <BorderColor>0xFF000000</BorderColor>
+   <TextColor>0xFF000000</TextColor>
+   <ShadowColor>0x00000000</ShadowColor>
+</MessageBox>
+<SystemMenu>
+   <BoxColor>0xFF999999</BoxColor>
+   <BorderColor>0xFF000000</BorderColor>
+   <TextColor>0xFF000000</TextColor>
+   <SelectColor>0xFFFFFFFF</SelectColor>
+   <ValueColor>0xFF000000</ValueColor>
+   <SelectValueColor>0xFFFFFFFF</SelectValueColor>
+</SystemMenu>
+<Resource Type="Image" Name="Folder">
+   <File>::ICO_DIR</File>
+ </Resource>
+ <Resource Type="Image" Name="Lock">
+   <File>::ICO_LOCK</File>
+ </Resource>
+<Resource Type="Image" Name="Emu">
+   <File>::ICO_EMU</File>
+ </Resource>
+ <Resource Type="Image" Name="XBE">
+   <File>::ICO_XBE</File>
+ </Resource>
+<Resource Type="Image" Name="Action">
+   <File>::ICO_ACTION</File>
+ </Resource>
+<Resource Type="Image" Name="Music">
+   <File>::ICO_MUSIC</File>
+ </Resource>
+<Resource name="screenshot" type="image">
+   <EntryNamed>media</EntryNamed>
+ </Resource>
+<Layout Screen="Menu">
+<LayoutElement Type="image" source="screenshot">
+     <Position l="0" t="0" w="640" h="480" />
+     <Scaling x="true" y="true" />
+     <Justify x="left" y="top" />
+     <Proportional>false</Proportional>
+</LayoutElement>
+<LayoutElement Type="image" source="screenshot">
+     <Position l="0" t="0" w="320" h="240" />
+     <Scaling x="true" y="true" />
+     <Justify x="left" y="top" />
+     <Proportional>false</Proportional>
+</LayoutElement>
+<LayoutElement Type="Box">
+     <Pos l="320" t="0" w="321" h="156" />
+     <Color>0x66999999</Color>
+</LayoutElement>
+<LayoutElement Type="Box">
+     <Pos l="0" t="239" w="320" h="248" />
+     <Color>0xFF000000</Color>
+</LayoutElement>
+<LayoutElement Type="Box">
+     <Pos l="319" t="156" w="322" h="325" />
+     <Color>0x90000000</Color>
+</LayoutElement>
+<LayoutElement Type="Text">
+     <Constant>Now Playing</Constant>   
+     <Pos x="330" y="34" h="32"/>
+     <TextColor>0xFF000000</TextColor>
+     <Justify x="left" y="top" />
+     <Scaling X="False" Y="True" />
+     <Proportional>True</Proportional>
+</LayoutElement>
+<LayoutElement Type="Text" Source="CurrentSong">
+     <Pos x="330" y="62" h="24"/>
+     <TextColor>0xFF000000</TextColor>
+     <Justify x="left" y="top" />
+     <Scaling X="False" Y="True" />
+     <Proportional>True</Proportional>
+      </LayoutElement>
+<LayoutElement Type="Text" Source="CurrentSoundtrack">
+     <Pos x="330" y="84" h="20"/>
+     <TextColor>0xFF000000</TextColor>
+     <Justify x="left" y="top" />
+     <Scaling X="False" Y="True" />
+     <Proportional>True</Proportional>
+</LayoutElement>
+<LayoutElement Type="Text" Source="ShortDriveFFree">
+     <Pos x="330" y="130" h="20"/>
+     <TextColor>0xFF000000</TextColor>
+     <Justify x="left" y="top" />
+     <Scaling X="False" Y="True" />
+     <Proportional>True</Proportional>
+</LayoutElement>
+<LayoutElement Type="Text" Source="CurrentSubMenu">
+     <Pos x="330" y="155" h="20"/>
+     <TextColor>0xFF999999</TextColor>
+     <Justify x="left" y="top" />
+     <Scaling X="False" Y="True" />
+     <Proportional>True</Proportional>
+</LayoutElement>
+<LayoutElement Type="Menu" Source="MXM">
+           <Pos l="330" t="185" w="455" h="230" />
+           <Scale x="false" y="false" />
+           <SelPos>0</SelPos>
+           <NumItems>5</NumItems>
+           <ScrollFactor>3</ScrollFactor>
+           <Thumbnails Align="left" FolderImg="Folder" 
+PassImg="Lock">true</Thumbnails>
+           <DrawSecondary>False</DrawSecondary>
+           <Primary Source="Title">
+               <Font>menuFont</Font>
+                <OffsetY>0</OffsetY>
+               <JustifyX>left</JustifyX>
+           </Primary>
+           <Selection>
+                <TextColor>0xFFFFFFFF</TextColor>
+                <ShadowColor>0xFF000000</ShadowColor>
+                <DoGlow>True</DoGlow>
+           </Selection>
+</LayoutElement>
+<LayoutElement Type="image" source="Xbe">
+     <Position l="64" t="360"/>
+     <Scaling x="false" y="false" />
+     <Justify x="left" y="top" />
+     <Proportional>false</Proportional>
+</LayoutElement>
+<LayoutElement Type="image" source="Emu">
+     <Position l="128" t="360"/>
+     <Scaling x="false" y="false" />
+     <Justify x="left" y="top" />
+     <Proportional>false</Proportional>
+</LayoutElement>
+<LayoutElement Type="image" source="Music">
+     <Position l="192" t="360"/>
+     <Scaling x="false" y="false" />
+     <Justify x="left" y="top" />
+     <Proportional>false</Proportional>
+</LayoutElement>
+<LayoutElement Type="image" source="Action">
+     <Position l="256" t="360"/>
+     <Scaling x="false" y="false" />
+     <Justify x="left" y="top" />
+     <Proportional>false</Proportional>
+</LayoutElement>
+<LayoutElement Type="Text" Source="CGTitle">
+     <Pos x="310" y="244" h="60"/>
+     <TextColor>0xFFFFFFFF</TextColor>
+     <Justify x="right" y="top" />
+     <Scaling X="True" Y="True" />
+</LayoutElement>
+<LayoutElement Type="Text" Source="CGDescr">
+     <Pos x="310" y="310" h="25"/>
+     <TextColor>0xFFFFFFFF</TextColor>
+     <Justify x="right" y="top" />
+     <Scaling X="True" Y="True" />
+</LayoutElement>
+</Layout>
+<Layout Screen="Load">
+   <LayoutElement Type="Image" Source="Screenshot">
+     <Pos l="0" t="0" w="640" h="480" />
+<Scaling x="true" y="true" />
+   </LayoutElement>
+   <LayoutElement Type="Text">
+     <Pos x="320" y="240" />
+     <TextColor>0xFF000000</TextColor>
+     <Justify x="center" y="center" />
+     <Multi>
+       <Text>Loading </Text>
+       <Text Source="CGTitle" />
+       <Text> ...</Text>
+     </Multi>
+   </LayoutElement>
+</Layout>
+<Layout Screen="Saver">
+       <LayoutElement Type="Image" Source="screenshot">
+           <Pos l="0" t="180" w="320" h="240" />
+           <Scale x="true" y="true" />
+           <Justify x="center" y="center" />
+           <Proportional>true</Proportional>
+           <Modifier Type="Pulse">
+           <Range x="10" y="10" />
+           </Modifier>
+           <Modifier Type="Bounce">
+           <Bounds l="15" t="10" b="470" r="630" />
+           </Modifier>
+       </LayoutElement>
+</Layout>
+</Skin>
+<Skin name="::Simplicity Remix">
+  <Information>
+    <Author>masahiko Remixed by JLM</Author>
+    <Copyright>Copyright 2003</Copyright>
+    <SkinVersion>1.5</SkinVersion>
+  </Information>
+  <Delays>
+    <Title>5000</Title>
+    <Load>5000</Load>
+    <Saver>300</Saver>
+  </Delays>
+  <MessageBox>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <ShadowColor>0x00000000</ShadowColor>
+  </MessageBox>
+  <SystemMenu>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <SelectColor>0xFFFFFFFF</SelectColor>
+    <ValueColor>0xFF000000</ValueColor>
+    <SelectValueColor>0xFFFFFFFF</SelectValueColor>
+  </SystemMenu>
+  <Resource Type=Image Name="Folder">
+    <File>::ICO_DIR</File>
+  </Resource>
+  <Resource Type=Image Name="Lock">
+    <File>::ICO_LOCK</File>
+  </Resource>
+  <Resource name="screenshot" type="image">
+    <EntryNamed>media</EntryNamed>
+  </Resource>
+  <Layout Screen="Title">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF3E4F62</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>Loading MXM ...</Constant>
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+    </LayoutElement>
+  </Layout>
+  <Layout Screen="Menu">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF3E4F62</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="640" h="18" />
+      <Color>0xFF3A6EA5</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="380" w="640" h="18" />
+      <Color>0xFF3A6EA5</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="244" h="311" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="443" t="105" w="244" h="205" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="243" t="307" w="396" h="72" />
+      <Color>0x66FFFFFF</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="307" w="244" h="72" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="85" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="104" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="305" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="378" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="397" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="image" source="screenshot">
+      <Position l="243" t="106" w="200" h="200" />
+      <Scaling x="true" y="false" />
+      <Justify x="left" y="top" />
+      <Proportional>true</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Color>0x663A6EA5</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Color>0x663A6EA5</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Condition>ItemPrev</Condition>
+      <Color>0xFF3A6EA5</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Condition>ItemNext</Condition>
+      <Color>0xFF3A6EA5</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=True />
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>MEDIA X MENU</Constant>
+      <Pos x="236" y="330" w="90"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=False />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="XboxVersion">
+      <Pos x="234" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="234" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+      <Multi>
+        <Text>MXM </Text> 
+        <Text Source="MXMVersion" />
+      </Multi>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="IP">
+      <Pos x="234" y="88" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Audiowire: </Constant>
+<Pos x="310" y="88" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="CurrentSong">
+      <Pos L="316" T="88" W="400" H="15"/>
+      <TextColor>0xFF000000</TextColor>
+<Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+    <Proportional>True</Proportional>
+</LayoutElement>
+<LayoutElement Type="Text" Source="shortdrivecfree">
+      <Pos x="234" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+</LayoutElement>
+<LayoutElement Type="Text">
+      <Pos x="234" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+   <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     <Multi>
+        <Text>D: </Text> 
+        <Text Source="DVDType" />
+</Multi>
+          </LayoutElement>
+    <LayoutElement Type="Text" Source="shortdriveefree">
+      <Pos x="234" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="shortdriveffree">
+      <Pos x="234" y="200" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="shortdrivegfree">
+      <Pos x="234" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="TrayState">
+      <Pos x="234" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="TempCPU">
+      <Pos x="234" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="TempSys">
+      <Pos x="234" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="DateTime">
+      <Pos x="234" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="CurrentSubMenu">
+      <Pos x="250" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="Name">
+      <Pos x="447" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Simplicity Remixed</Constant>
+      <Pos x="447" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Launch Mode: </Constant>
+<Pos x="447" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="LaunchMode">
+<Pos x="527" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Video Mode:</Constant>
+<Pos x="447" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="VideoStandard">
+<Pos x="520" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Game Mode: </Constant>
+<Pos x="447" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="CGEntryMode">
+<Pos x="523" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Kernel: </Constant>
+<Pos x="447" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="KernelVersion">
+<Pos x="488" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>BIOS: </Constant>
+<Pos x="447" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="BIOSName">
+<Pos x="486" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="CurrentSoundtrack">
+<Pos x="447" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Description: </Constant>
+<Pos x="447" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="CGDescr">
+<Pos x="520" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+    <LayoutElement Type="Menu" Source="MXM">
+      <Pos l="247" t="310" w="327" h="65" />
+      <Scale x="false" y="false" />
+      <Thumbnails Align="left" FolderImg="Folder" PassImg="Lock">true</Thumbnails>
+      <SelPos>0</SelPos>
+      <NumItems>1</NumItems>
+      <MinimumHeight>65</MinimumHeight>
+      <SmoothScroll>True</SmoothScroll>
+      <DrawSecondary>True</DrawSecondary>
+      <ScrollFactor>3</ScrollFactor>
+      <Primary Source="Title">
+        <OffsetY>0</OffsetY>
+        <JustifyX>left</JustifyX>
+      </Primary>
+      <Secondary Source="Descr">
+        <OffsetY>0</OffsetY>
+        <JustifyX>right</JustifyX>
+      </Secondary>
+      <Selection>
+        <TextColor>0xFF000000</TextColor>
+      </Selection>
+      <UnSelItem>
+        <TextColor>0x00000000</TextColor>
+      </UnSelItem>
+    </LayoutElement>
+  </Layout>
+  <Layout Screen="Load">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF3E4F62</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+      <Multi>
+        <Text>Loading </Text> 
+        <Text Source="CGTitle" />
+        <Text> ...</Text> 
+      </Multi>
+    </LayoutElement>
+  </Layout>
+  <Layout Screen="Saver">
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=True />
+      <Modifier Type="Bounce">
+        <Bounds l="0" t="0" b="480" r="640" />
+      </Modifier>
+    </LayoutElement>
+  </Layout>
+</Skin>
+
+<Skin name="::Simplicity Remix Blue">
+  <Information>
+    <Author>masahiko Remixed by JLM</Author>
+    <Copyright>Copyright 2003</Copyright>
+    <SkinVersion>1.5</SkinVersion>
+  </Information>
+  <Delays>
+    <Title>5000</Title>
+    <Load>5000</Load>
+    <Saver>300</Saver>
+  </Delays>
+  <MessageBox>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <ShadowColor>0x00000000</ShadowColor>
+  </MessageBox>
+  <SystemMenu>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <SelectColor>0xFFFFFFFF</SelectColor>
+    <ValueColor>0xFF000000</ValueColor>
+    <SelectValueColor>0xFFFFFFFF</SelectValueColor>
+  </SystemMenu>
+  <Resource Type=Image Name="Folder">
+    <File>::ICO_DIR</File>
+  </Resource>
+  <Resource Type=Image Name="Lock">
+    <File>::ICO_LOCK</File>
+  </Resource>
+  <Resource name="screenshot" type="image">
+    <EntryNamed>media</EntryNamed>
+  </Resource>
+  <Layout Screen="Title">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF004488</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>Loading MXM ...</Constant>
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+    </LayoutElement>
+  </Layout>
+  <Layout Screen="Menu">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF004488</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="640" h="18" />
+      <Color>0xFF0057AE</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="380" w="640" h="18" />
+      <Color>0xFF0057AE</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="244" h="311" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="443" t="105" w="244" h="205" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="243" t="307" w="396" h="72" />
+      <Color>0x66FFFFFF</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="307" w="244" h="72" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="85" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="104" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="305" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="378" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="397" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="image" source="screenshot">
+      <Position l="243" t="106" w="200" h="200" />
+      <Scaling x="true" y="false" />
+      <Justify x="left" y="top" />
+      <Proportional>true</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Color>0xFF0057AE</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Color>0xFF0057AE</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Condition>ItemPrev</Condition>
+      <Color>0xFF0057AE</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Condition>ItemNext</Condition>
+      <Color>0xFF0057AE</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=True />
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>MEDIA X MENU</Constant>
+      <Pos x="236" y="330" w="90"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=False />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="XboxVersion">
+      <Pos x="234" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="234" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+      <Multi>
+        <Text>MXM </Text> 
+        <Text Source="MXMVersion" />
+      </Multi>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="IP">
+      <Pos x="234" y="88" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Audiowire: </Constant>
+<Pos x="310" y="88" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="CurrentSong">
+      <Pos L="316" T="88" W="400" H="15"/>
+      <TextColor>0xFF000000</TextColor>
+<Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+    <Proportional>True</Proportional>
+</LayoutElement>
+<LayoutElement Type="Text" Source="shortdrivecfree">
+      <Pos x="234" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+</LayoutElement>
+<LayoutElement Type="Text">
+      <Pos x="234" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+   <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     <Multi>
+        <Text>D: </Text> 
+        <Text Source="DVDType" />
+</Multi>
+          </LayoutElement>
+    <LayoutElement Type="Text" Source="shortdriveefree">
+      <Pos x="234" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="shortdriveffree">
+      <Pos x="234" y="200" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="shortdrivegfree">
+      <Pos x="234" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="TrayState">
+      <Pos x="234" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="TempCPU">
+      <Pos x="234" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="TempSys">
+      <Pos x="234" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="DateTime">
+      <Pos x="234" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="CurrentSubMenu">
+      <Pos x="250" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="Name">
+      <Pos x="447" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Simplicity Remixed</Constant>
+      <Pos x="447" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Launch Mode: </Constant>
+<Pos x="447" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="LaunchMode">
+<Pos x="527" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Video Mode:</Constant>
+<Pos x="447" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="VideoStandard">
+<Pos x="520" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Game Mode: </Constant>
+<Pos x="447" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="CGEntryMode">
+<Pos x="523" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Kernel: </Constant>
+<Pos x="447" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="KernelVersion">
+<Pos x="488" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>BIOS: </Constant>
+<Pos x="447" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="BIOSName">
+<Pos x="486" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CurrentSoundtrack">
+<Pos x="447" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Description: </Constant>
+<Pos x="447" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="CGDescr">
+<Pos x="520" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+    <LayoutElement Type="Menu" Source="MXM">
+      <Pos l="247" t="310" w="327" h="65" />
+      <Scale x="false" y="false" />
+      <Thumbnails Align="left" FolderImg="Folder" PassImg="Lock">true</Thumbnails>
+      <SelPos>0</SelPos>
+      <NumItems>1</NumItems>
+      <MinimumHeight>65</MinimumHeight>
+      <SmoothScroll>True</SmoothScroll>
+      <DrawSecondary>True</DrawSecondary>
+      <ScrollFactor>3</ScrollFactor>
+      <Primary Source="Title">
+        <OffsetY>0</OffsetY>
+        <JustifyX>left</JustifyX>
+      </Primary>
+      <Secondary Source="Descr">
+        <OffsetY>0</OffsetY>
+        <JustifyX>right</JustifyX>
+      </Secondary>
+      <Selection>
+        <TextColor>0xFF000000</TextColor>
+      </Selection>
+      <UnSelItem>
+        <TextColor>0x00000000</TextColor>
+      </UnSelItem>
+    </LayoutElement>
+  </Layout>
+  <Layout Screen="Load">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF004488</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+      <Multi>
+        <Text>Loading </Text> 
+        <Text Source="CGTitle" />
+        <Text> ...</Text> 
+      </Multi>
+    </LayoutElement>
+  </Layout>
+  <Layout Screen="Saver">
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=True />
+      <Modifier Type="Bounce">
+        <Bounds l="0" t="0" b="480" r="640" />
+      </Modifier>
+    </LayoutElement>
+  </Layout>
+</Skin>
+<Skin name="::Simplicity Remix Green">
+
+
+
+  <Information>
+    <Author>masahiko Remixed by JLM</Author>
+    <Copyright>Copyright 2003</Copyright>
+    <SkinVersion>1.5</SkinVersion>
+  </Information>
+
+
+
+  <Delays>
+    <Title>5000</Title>
+    <Load>5000</Load>
+    <Saver>300</Saver>
+  </Delays>
+
+
+
+  <MessageBox>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <ShadowColor>0x00000000</ShadowColor>
+  </MessageBox>
+
+
+
+  <SystemMenu>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <SelectColor>0xFFFFFFFF</SelectColor>
+    <ValueColor>0xFF000000</ValueColor>
+    <SelectValueColor>0xFFFFFFFF</SelectValueColor>
+  </SystemMenu>
+
+
+
+  <Resource Type=Image Name="Folder">
+    <File>::ICO_DIR</File>
+  </Resource>
+  <Resource Type=Image Name="Lock">
+    <File>::ICO_LOCK</File>
+  </Resource>
+  <Resource name="screenshot" type="image">
+    <EntryNamed>media</EntryNamed>
+  </Resource>
+
+
+  <Layout Screen="Title">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF006200</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>Loading MXM ...</Constant>
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Menu">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF006200</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="640" h="18" />
+      <Color>0xFF00B700</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="380" w="640" h="18" />
+      <Color>0xFF00B700</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="244" h="311" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="443" t="105" w="244" h="205" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="243" t="307" w="396" h="72" />
+      <Color>0x66FFFFFF</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="307" w="244" h="72" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="85" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="104" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="305" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="378" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="397" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="image" source="screenshot">
+      <Position l="243" t="106" w="200" h="200" />
+      <Scaling x="true" y="false" />
+      <Justify x="left" y="top" />
+      <Proportional>true</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Color>0xFF00B700</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Color>0xFF00B700</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Condition>ItemPrev</Condition>
+      <Color>0xFF00B700</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Condition>ItemNext</Condition>
+      <Color>0xFF00B700</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=True />
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>MEDIA X MENU</Constant>
+      <Pos x="236" y="330" w="90"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=False />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="XboxVersion">
+      <Pos x="234" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="234" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+      <Multi>
+        <Text>MXM </Text> 
+        <Text Source="MXMVersion" />
+      </Multi>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="IP">
+      <Pos x="234" y="88" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Audiowire: </Constant>
+<Pos x="310" y="88" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CurrentSong">
+      <Pos L="316" T="88" W="400" H="15"/>
+      <TextColor>0xFF000000</TextColor>
+<Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+    <Proportional>True</Proportional>
+</LayoutElement>
+
+
+    
+<LayoutElement Type="Text" Source="shortdrivecfree">
+      <Pos x="234" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+</LayoutElement>
+<LayoutElement Type="Text">
+      <Pos x="234" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+   <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     <Multi>
+        <Text>D: </Text> 
+        <Text Source="DVDType" />
+</Multi>
+
+          </LayoutElement>
+    <LayoutElement Type="Text" Source="shortdriveefree">
+      <Pos x="234" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="shortdriveffree">
+      <Pos x="234" y="200" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="shortdrivegfree">
+      <Pos x="234" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="TrayState">
+      <Pos x="234" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+
+
+
+    <LayoutElement Type="Text" Source="TempCPU">
+      <Pos x="234" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="TempSys">
+      <Pos x="234" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="DateTime">
+      <Pos x="234" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="CurrentSubMenu">
+      <Pos x="250" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="Name">
+      <Pos x="447" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Simplicity Remixed</Constant>
+      <Pos x="447" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Launch Mode: </Constant>
+<Pos x="447" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="LaunchMode">
+<Pos x="527" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Video Mode:</Constant>
+<Pos x="447" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="VideoStandard">
+<Pos x="520" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Game Mode: </Constant>
+<Pos x="447" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CGEntryMode">
+<Pos x="523" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Kernel: </Constant>
+<Pos x="447" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="KernelVersion">
+<Pos x="488" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>BIOS: </Constant>
+<Pos x="447" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="BIOSName">
+<Pos x="486" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CurrentSoundtrack">
+<Pos x="447" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Description: </Constant>
+<Pos x="447" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="CGDescr">
+<Pos x="520" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+
+
+
+
+
+
+
+
+    <LayoutElement Type="Menu" Source="MXM">
+      <Pos l="247" t="310" w="327" h="65" />
+      <Scale x="false" y="false" />
+      <Thumbnails Align="left" FolderImg="Folder" PassImg="Lock">true</Thumbnails>
+      <SelPos>0</SelPos>
+      <NumItems>1</NumItems>
+      <MinimumHeight>65</MinimumHeight>
+      <SmoothScroll>True</SmoothScroll>
+      <DrawSecondary>True</DrawSecondary>
+      <ScrollFactor>3</ScrollFactor>
+      <Primary Source="Title">
+        <OffsetY>0</OffsetY>
+        <JustifyX>left</JustifyX>
+      </Primary>
+      <Secondary Source="Descr">
+        <OffsetY>0</OffsetY>
+        <JustifyX>right</JustifyX>
+      </Secondary>
+      <Selection>
+        <TextColor>0xFF000000</TextColor>
+      </Selection>
+      <UnSelItem>
+        <TextColor>0x00000000</TextColor>
+      </UnSelItem>
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Load">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF006200</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+      <Multi>
+        <Text>Loading </Text> 
+        <Text Source="CGTitle" />
+        <Text> ...</Text> 
+      </Multi>
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Saver">
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=True />
+      <Modifier Type="Bounce">
+        <Bounds l="0" t="0" b="480" r="640" />
+      </Modifier>
+    </LayoutElement>
+  </Layout>
+</Skin>
+<Skin name="::Simplicity Remix Orange">
+
+
+
+  <Information>
+    <Author>masahiko Remixed by JLM</Author>
+    <Copyright>Copyright 2003</Copyright>
+    <SkinVersion>1.5</SkinVersion>
+  </Information>
+
+
+
+  <Delays>
+    <Title>5000</Title>
+    <Load>5000</Load>
+    <Saver>300</Saver>
+  </Delays>
+
+
+
+  <MessageBox>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <ShadowColor>0x00000000</ShadowColor>
+  </MessageBox>
+
+
+
+  <SystemMenu>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <SelectColor>0xFFFFFFFF</SelectColor>
+    <ValueColor>0xFF000000</ValueColor>
+    <SelectValueColor>0xFFFFFFFF</SelectValueColor>
+  </SystemMenu>
+
+
+
+  <Resource Type=Image Name="Folder">
+    <File>::ICO_DIR</File>
+  </Resource>
+  <Resource Type=Image Name="Lock">
+    <File>::ICO_LOCK</File>
+  </Resource>
+  <Resource name="screenshot" type="image">
+    <EntryNamed>media</EntryNamed>
+  </Resource>
+
+
+  <Layout Screen="Title">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF6A3500</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>Loading MXM ...</Constant>
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Menu">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF6A3500</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="640" h="18" />
+      <Color>0xFFCC6600</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="380" w="640" h="18" />
+      <Color>0xFFCC6600</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="244" h="311" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="443" t="105" w="244" h="205" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="243" t="307" w="396" h="72" />
+      <Color>0x66FFFFFF</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="307" w="244" h="72" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="85" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="104" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="305" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="378" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="397" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="image" source="screenshot">
+      <Position l="243" t="106" w="200" h="200" />
+      <Scaling x="true" y="false" />
+      <Justify x="left" y="top" />
+      <Proportional>true</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Color>0xFFCC6600</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Color>0xFFCC6600</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Condition>ItemPrev</Condition>
+      <Color>0xFFCC6600</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Condition>ItemNext</Condition>
+      <Color>0xFFCC6600</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=True />
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>MEDIA X MENU</Constant>
+      <Pos x="236" y="330" w="90"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=False />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="XboxVersion">
+      <Pos x="234" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="234" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+      <Multi>
+        <Text>MXM </Text> 
+        <Text Source="MXMVersion" />
+      </Multi>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="IP">
+      <Pos x="234" y="88" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Audiowire: </Constant>
+<Pos x="310" y="88" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CurrentSong">
+      <Pos L="316" T="88" W="400" H="15"/>
+      <TextColor>0xFF000000</TextColor>
+<Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+    <Proportional>True</Proportional>
+</LayoutElement>
+
+
+    
+<LayoutElement Type="Text" Source="shortdrivecfree">
+      <Pos x="234" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+</LayoutElement>
+<LayoutElement Type="Text">
+      <Pos x="234" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+   <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     <Multi>
+        <Text>D: </Text> 
+        <Text Source="DVDType" />
+</Multi>
+
+          </LayoutElement>
+    <LayoutElement Type="Text" Source="shortdriveefree">
+      <Pos x="234" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="shortdriveffree">
+      <Pos x="234" y="200" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="shortdrivegfree">
+      <Pos x="234" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="TrayState">
+      <Pos x="234" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+
+
+
+    <LayoutElement Type="Text" Source="TempCPU">
+      <Pos x="234" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="TempSys">
+      <Pos x="234" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="DateTime">
+      <Pos x="234" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="CurrentSubMenu">
+      <Pos x="250" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="Name">
+      <Pos x="447" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Simplicity Remixed</Constant>
+      <Pos x="447" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Launch Mode: </Constant>
+<Pos x="447" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="LaunchMode">
+<Pos x="527" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Video Mode:</Constant>
+<Pos x="447" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="VideoStandard">
+<Pos x="520" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Game Mode: </Constant>
+<Pos x="447" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CGEntryMode">
+<Pos x="523" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Kernel: </Constant>
+<Pos x="447" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="KernelVersion">
+<Pos x="488" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>BIOS: </Constant>
+<Pos x="447" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="BIOSName">
+<Pos x="486" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CurrentSoundtrack">
+<Pos x="447" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Description: </Constant>
+<Pos x="447" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="CGDescr">
+<Pos x="520" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+
+
+
+
+
+
+
+
+    <LayoutElement Type="Menu" Source="MXM">
+      <Pos l="247" t="310" w="327" h="65" />
+      <Scale x="false" y="false" />
+      <Thumbnails Align="left" FolderImg="Folder" PassImg="Lock">true</Thumbnails>
+      <SelPos>0</SelPos>
+      <NumItems>1</NumItems>
+      <MinimumHeight>65</MinimumHeight>
+      <SmoothScroll>True</SmoothScroll>
+      <DrawSecondary>True</DrawSecondary>
+      <ScrollFactor>3</ScrollFactor>
+      <Primary Source="Title">
+        <OffsetY>0</OffsetY>
+        <JustifyX>left</JustifyX>
+      </Primary>
+      <Secondary Source="Descr">
+        <OffsetY>0</OffsetY>
+        <JustifyX>right</JustifyX>
+      </Secondary>
+      <Selection>
+        <TextColor>0xFF000000</TextColor>
+      </Selection>
+      <UnSelItem>
+        <TextColor>0x00000000</TextColor>
+      </UnSelItem>
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Load">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF6A3500</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+      <Multi>
+        <Text>Loading </Text> 
+        <Text Source="CGTitle" />
+        <Text> ...</Text> 
+      </Multi>
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Saver">
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=True />
+      <Modifier Type="Bounce">
+        <Bounds l="0" t="0" b="480" r="640" />
+      </Modifier>
+    </LayoutElement>
+  </Layout>
+</Skin>
+
+<Skin name="::Simplicity Remix Purple">
+
+
+
+  <Information>
+    <Author>masahiko Remixed by JLM</Author>
+    <Copyright>Copyright 2003</Copyright>
+    <SkinVersion>1.5</SkinVersion>
+  </Information>
+
+
+
+  <Delays>
+    <Title>5000</Title>
+    <Load>5000</Load>
+    <Saver>300</Saver>
+  </Delays>
+
+
+
+  <MessageBox>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <ShadowColor>0x00000000</ShadowColor>
+  </MessageBox>
+
+
+
+  <SystemMenu>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <SelectColor>0xFFFFFFFF</SelectColor>
+    <ValueColor>0xFF000000</ValueColor>
+    <SelectValueColor>0xFFFFFFFF</SelectValueColor>
+  </SystemMenu>
+
+
+
+  <Resource Type=Image Name="Folder">
+    <File>::ICO_DIR</File>
+  </Resource>
+  <Resource Type=Image Name="Lock">
+    <File>::ICO_LOCK</File>
+  </Resource>
+  <Resource name="screenshot" type="image">
+    <EntryNamed>media</EntryNamed>
+  </Resource>
+
+
+  <Layout Screen="Title">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF73048E</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>Loading MXM ...</Constant>
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Menu">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF73048E</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="640" h="18" />
+      <Color>0xFFAA06D2</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="380" w="640" h="18" />
+      <Color>0xFFAA06D2</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="244" h="311" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="443" t="105" w="244" h="205" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="243" t="307" w="396" h="72" />
+      <Color>0x66FFFFFF</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="307" w="244" h="72" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="85" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="104" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="305" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="378" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="397" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="image" source="screenshot">
+      <Position l="243" t="106" w="200" h="200" />
+      <Scaling x="true" y="false" />
+      <Justify x="left" y="top" />
+      <Proportional>true</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Color>0xFFAA06D2</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Color>0xFFAA06D2</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Condition>ItemPrev</Condition>
+      <Color>0xFFAA06D2</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Condition>ItemNext</Condition>
+      <Color>0xFFAA06D2</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=True />
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>MEDIA X MENU</Constant>
+      <Pos x="236" y="330" w="90"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=False />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="XboxVersion">
+      <Pos x="234" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="234" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+      <Multi>
+        <Text>MXM </Text> 
+        <Text Source="MXMVersion" />
+      </Multi>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="IP">
+      <Pos x="234" y="88" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Audiowire: </Constant>
+<Pos x="310" y="88" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CurrentSong">
+      <Pos L="316" T="88" W="400" H="15"/>
+      <TextColor>0xFF000000</TextColor>
+<Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+    <Proportional>True</Proportional>
+</LayoutElement>
+
+
+    
+<LayoutElement Type="Text" Source="shortdrivecfree">
+      <Pos x="234" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+</LayoutElement>
+<LayoutElement Type="Text">
+      <Pos x="234" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+   <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     <Multi>
+        <Text>D: </Text> 
+        <Text Source="DVDType" />
+</Multi>
+
+          </LayoutElement>
+    <LayoutElement Type="Text" Source="shortdriveefree">
+      <Pos x="234" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="shortdriveffree">
+      <Pos x="234" y="200" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="shortdrivegfree">
+      <Pos x="234" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="TrayState">
+      <Pos x="234" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+
+
+
+    <LayoutElement Type="Text" Source="TempCPU">
+      <Pos x="234" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="TempSys">
+      <Pos x="234" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="DateTime">
+      <Pos x="234" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="CurrentSubMenu">
+      <Pos x="250" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="Name">
+      <Pos x="447" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Simplicity Remixed</Constant>
+      <Pos x="447" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Launch Mode: </Constant>
+<Pos x="447" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="LaunchMode">
+<Pos x="527" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Video Mode:</Constant>
+<Pos x="447" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="VideoStandard">
+<Pos x="520" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Game Mode: </Constant>
+<Pos x="447" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CGEntryMode">
+<Pos x="523" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Kernel: </Constant>
+<Pos x="447" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="KernelVersion">
+<Pos x="488" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>BIOS: </Constant>
+<Pos x="447" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="BIOSName">
+<Pos x="486" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CurrentSoundtrack">
+<Pos x="447" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Description: </Constant>
+<Pos x="447" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="CGDescr">
+<Pos x="520" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+
+
+
+
+
+
+
+
+    <LayoutElement Type="Menu" Source="MXM">
+      <Pos l="247" t="310" w="327" h="65" />
+      <Scale x="false" y="false" />
+      <Thumbnails Align="left" FolderImg="Folder" PassImg="Lock">true</Thumbnails>
+      <SelPos>0</SelPos>
+      <NumItems>1</NumItems>
+      <MinimumHeight>65</MinimumHeight>
+      <SmoothScroll>True</SmoothScroll>
+      <DrawSecondary>True</DrawSecondary>
+      <ScrollFactor>3</ScrollFactor>
+      <Primary Source="Title">
+        <OffsetY>0</OffsetY>
+        <JustifyX>left</JustifyX>
+      </Primary>
+      <Secondary Source="Descr">
+        <OffsetY>0</OffsetY>
+        <JustifyX>right</JustifyX>
+      </Secondary>
+      <Selection>
+        <TextColor>0xFF000000</TextColor>
+      </Selection>
+      <UnSelItem>
+        <TextColor>0x00000000</TextColor>
+      </UnSelItem>
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Load">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF73048E</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+      <Multi>
+        <Text>Loading </Text> 
+        <Text Source="CGTitle" />
+        <Text> ...</Text> 
+      </Multi>
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Saver">
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=True />
+      <Modifier Type="Bounce">
+        <Bounds l="0" t="0" b="480" r="640" />
+      </Modifier>
+    </LayoutElement>
+  </Layout>
+</Skin>
+
+<Skin name="::Simplicity Remix Red">
+
+
+
+  <Information>
+    <Author>masahiko Remixed by JLM</Author>
+    <Copyright>Copyright 2003</Copyright>
+    <SkinVersion>1.5</SkinVersion>
+  </Information>
+
+
+
+  <Delays>
+    <Title>5000</Title>
+    <Load>5000</Load>
+    <Saver>300</Saver>
+  </Delays>
+
+
+
+  <MessageBox>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <ShadowColor>0x00000000</ShadowColor>
+  </MessageBox>
+
+
+
+  <SystemMenu>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <SelectColor>0xFFFFFFFF</SelectColor>
+    <ValueColor>0xFF000000</ValueColor>
+    <SelectValueColor>0xFFFFFFFF</SelectValueColor>
+  </SystemMenu>
+
+
+
+  <Resource Type=Image Name="Folder">
+    <File>::ICO_DIR</File>
+  </Resource>
+  <Resource Type=Image Name="Lock">
+    <File>::ICO_LOCK</File>
+  </Resource>
+  <Resource name="screenshot" type="image">
+    <EntryNamed>media</EntryNamed>
+  </Resource>
+
+
+  <Layout Screen="Title">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF872927</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>Loading MXM ...</Constant>
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Menu">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF872927</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="640" h="18" />
+      <Color>0xFFAE3633</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="380" w="640" h="18" />
+      <Color>0xFFAE3633</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="244" h="311" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="443" t="105" w="244" h="205" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="243" t="307" w="396" h="72" />
+      <Color>0x66FFFFFF</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="307" w="244" h="72" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="85" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="104" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="305" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="378" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="397" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="image" source="screenshot">
+      <Position l="243" t="106" w="200" h="200" />
+      <Scaling x="true" y="false" />
+      <Justify x="left" y="top" />
+      <Proportional>true</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Color>0xFFAE3633</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Color>0xFFAE3633</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Condition>ItemPrev</Condition>
+      <Color>0xFFAE3633</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Condition>ItemNext</Condition>
+      <Color>0xFFAE3633</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=True />
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>MEDIA X MENU</Constant>
+      <Pos x="236" y="330" w="90"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=False />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="XboxVersion">
+      <Pos x="234" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="234" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+      <Multi>
+        <Text>MXM </Text> 
+        <Text Source="MXMVersion" />
+      </Multi>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="IP">
+      <Pos x="234" y="88" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Audiowire: </Constant>
+<Pos x="310" y="88" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CurrentSong">
+      <Pos L="316" T="88" W="400" H="15"/>
+      <TextColor>0xFF000000</TextColor>
+<Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+    <Proportional>True</Proportional>
+</LayoutElement>
+
+
+    
+<LayoutElement Type="Text" Source="shortdrivecfree">
+      <Pos x="234" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+</LayoutElement>
+<LayoutElement Type="Text">
+      <Pos x="234" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+   <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     <Multi>
+        <Text>D: </Text> 
+        <Text Source="DVDType" />
+</Multi>
+
+          </LayoutElement>
+    <LayoutElement Type="Text" Source="shortdriveefree">
+      <Pos x="234" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="shortdriveffree">
+      <Pos x="234" y="200" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="shortdrivegfree">
+      <Pos x="234" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="TrayState">
+      <Pos x="234" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+
+
+
+    <LayoutElement Type="Text" Source="TempCPU">
+      <Pos x="234" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="TempSys">
+      <Pos x="234" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="DateTime">
+      <Pos x="234" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="CurrentSubMenu">
+      <Pos x="250" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="Name">
+      <Pos x="447" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Simplicity Remixed</Constant>
+      <Pos x="447" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Launch Mode: </Constant>
+<Pos x="447" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="LaunchMode">
+<Pos x="527" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Video Mode:</Constant>
+<Pos x="447" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="VideoStandard">
+<Pos x="520" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Game Mode: </Constant>
+<Pos x="447" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CGEntryMode">
+<Pos x="523" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Kernel: </Constant>
+<Pos x="447" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="KernelVersion">
+<Pos x="488" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>BIOS: </Constant>
+<Pos x="447" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="BIOSName">
+<Pos x="486" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CurrentSoundtrack">
+<Pos x="447" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Description: </Constant>
+<Pos x="447" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="CGDescr">
+<Pos x="520" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+
+
+
+
+
+
+
+
+    <LayoutElement Type="Menu" Source="MXM">
+      <Pos l="247" t="310" w="327" h="65" />
+      <Scale x="false" y="false" />
+      <Thumbnails Align="left" FolderImg="Folder" PassImg="Lock">true</Thumbnails>
+      <SelPos>0</SelPos>
+      <NumItems>1</NumItems>
+      <MinimumHeight>65</MinimumHeight>
+      <SmoothScroll>True</SmoothScroll>
+      <DrawSecondary>True</DrawSecondary>
+      <ScrollFactor>3</ScrollFactor>
+      <Primary Source="Title">
+        <OffsetY>0</OffsetY>
+        <JustifyX>left</JustifyX>
+      </Primary>
+      <Secondary Source="Descr">
+        <OffsetY>0</OffsetY>
+        <JustifyX>right</JustifyX>
+      </Secondary>
+      <Selection>
+        <TextColor>0xFF000000</TextColor>
+      </Selection>
+      <UnSelItem>
+        <TextColor>0x00000000</TextColor>
+      </UnSelItem>
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Load">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF872927</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+      <Multi>
+        <Text>Loading </Text> 
+        <Text Source="CGTitle" />
+        <Text> ...</Text> 
+      </Multi>
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Saver">
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=True />
+      <Modifier Type="Bounce">
+        <Bounds l="0" t="0" b="480" r="640" />
+      </Modifier>
+    </LayoutElement>
+  </Layout>
+</Skin>
+
+<Skin name="::Simplicity Remix Silver">
+
+
+
+  <Information>
+    <Author>masahiko Remixed by JLM</Author>
+    <Copyright>Copyright 2003</Copyright>
+    <SkinVersion>1.5</SkinVersion>
+  </Information>
+
+
+
+  <Delays>
+    <Title>5000</Title>
+    <Load>5000</Load>
+    <Saver>300</Saver>
+  </Delays>
+
+
+
+  <MessageBox>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <ShadowColor>0x00000000</ShadowColor>
+  </MessageBox>
+
+
+
+  <SystemMenu>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <SelectColor>0xFFFFFFFF</SelectColor>
+    <ValueColor>0xFF000000</ValueColor>
+    <SelectValueColor>0xFFFFFFFF</SelectValueColor>
+  </SystemMenu>
+
+
+
+  <Resource Type=Image Name="Folder">
+    <File>::ICO_DIR</File>
+  </Resource>
+  <Resource Type=Image Name="Lock">
+    <File>::ICO_LOCK</File>
+  </Resource>
+  <Resource name="screenshot" type="image">
+    <EntryNamed>media</EntryNamed>
+  </Resource>
+
+
+  <Layout Screen="Title">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF646464</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>Loading MXM ...</Constant>
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Menu">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF646464</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="640" h="18" />
+      <Color>0xFF838383</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="380" w="640" h="18" />
+      <Color>0xFF838383</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="244" h="311" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="443" t="105" w="244" h="205" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="243" t="307" w="396" h="72" />
+      <Color>0x66FFFFFF</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="307" w="244" h="72" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="85" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="104" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="305" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="378" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="397" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="image" source="screenshot">
+      <Position l="243" t="106" w="200" h="200" />
+      <Scaling x="true" y="false" />
+      <Justify x="left" y="top" />
+      <Proportional>true</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Color>0xFF838383</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Color>0xFF838383</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Condition>ItemPrev</Condition>
+      <Color>0xFF838383</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Condition>ItemNext</Condition>
+      <Color>0xFF838383</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=True />
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>MEDIA X MENU</Constant>
+      <Pos x="236" y="330" w="90"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=False />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="XboxVersion">
+      <Pos x="234" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="234" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+      <Multi>
+        <Text>MXM </Text> 
+        <Text Source="MXMVersion" />
+      </Multi>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="IP">
+      <Pos x="234" y="88" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Audiowire: </Constant>
+<Pos x="310" y="88" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CurrentSong">
+      <Pos L="316" T="88" W="400" H="15"/>
+      <TextColor>0xFF000000</TextColor>
+<Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+    <Proportional>True</Proportional>
+</LayoutElement>
+
+
+    
+<LayoutElement Type="Text" Source="shortdrivecfree">
+      <Pos x="234" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+</LayoutElement>
+<LayoutElement Type="Text">
+      <Pos x="234" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+   <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     <Multi>
+        <Text>D: </Text> 
+        <Text Source="DVDType" />
+</Multi>
+
+          </LayoutElement>
+    <LayoutElement Type="Text" Source="shortdriveefree">
+      <Pos x="234" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="shortdriveffree">
+      <Pos x="234" y="200" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="shortdrivegfree">
+      <Pos x="234" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="TrayState">
+      <Pos x="234" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+
+
+
+    <LayoutElement Type="Text" Source="TempCPU">
+      <Pos x="234" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="TempSys">
+      <Pos x="234" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="DateTime">
+      <Pos x="234" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="CurrentSubMenu">
+      <Pos x="250" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="Name">
+      <Pos x="447" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Simplicity Remixed</Constant>
+      <Pos x="447" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Launch Mode: </Constant>
+<Pos x="447" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="LaunchMode">
+<Pos x="527" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Video Mode:</Constant>
+<Pos x="447" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="VideoStandard">
+<Pos x="520" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Game Mode: </Constant>
+<Pos x="447" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CGEntryMode">
+<Pos x="523" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Kernel: </Constant>
+<Pos x="447" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="KernelVersion">
+<Pos x="488" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>BIOS: </Constant>
+<Pos x="447" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="BIOSName">
+<Pos x="486" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CurrentSoundtrack">
+<Pos x="447" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Description: </Constant>
+<Pos x="447" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="CGDescr">
+<Pos x="520" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+
+
+
+
+
+
+
+
+    <LayoutElement Type="Menu" Source="MXM">
+      <Pos l="247" t="310" w="327" h="65" />
+      <Scale x="false" y="false" />
+      <Thumbnails Align="left" FolderImg="Folder" PassImg="Lock">true</Thumbnails>
+      <SelPos>0</SelPos>
+      <NumItems>1</NumItems>
+      <MinimumHeight>65</MinimumHeight>
+      <SmoothScroll>True</SmoothScroll>
+      <DrawSecondary>True</DrawSecondary>
+      <ScrollFactor>3</ScrollFactor>
+      <Primary Source="Title">
+        <OffsetY>0</OffsetY>
+        <JustifyX>left</JustifyX>
+      </Primary>
+      <Secondary Source="Descr">
+        <OffsetY>0</OffsetY>
+        <JustifyX>right</JustifyX>
+      </Secondary>
+      <Selection>
+        <TextColor>0xFF000000</TextColor>
+      </Selection>
+      <UnSelItem>
+        <TextColor>0x00000000</TextColor>
+      </UnSelItem>
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Load">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF646464</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+      <Multi>
+        <Text>Loading </Text> 
+        <Text Source="CGTitle" />
+        <Text> ...</Text> 
+      </Multi>
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Saver">
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=True />
+      <Modifier Type="Bounce">
+        <Bounds l="0" t="0" b="480" r="640" />
+      </Modifier>
+    </LayoutElement>
+  </Layout>
+</Skin>
+<Skin name="::Simplicity Remix Yellow">
+
+
+
+  <Information>
+    <Author>masahiko Remixed by JLM</Author>
+    <Copyright>Copyright 2003</Copyright>
+    <SkinVersion>1.5</SkinVersion>
+  </Information>
+
+
+
+  <Delays>
+    <Title>5000</Title>
+    <Load>5000</Load>
+    <Saver>300</Saver>
+  </Delays>
+
+
+
+  <MessageBox>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <ShadowColor>0x00000000</ShadowColor>
+  </MessageBox>
+
+
+
+  <SystemMenu>
+    <BoxColor>0xFF999999</BoxColor>
+    <BorderColor>0xFF000000</BorderColor>
+    <TextColor>0xFF000000</TextColor>
+    <SelectColor>0xFFFFFFFF</SelectColor>
+    <ValueColor>0xFF000000</ValueColor>
+    <SelectValueColor>0xFFFFFFFF</SelectValueColor>
+  </SystemMenu>
+
+
+
+  <Resource Type=Image Name="Folder">
+    <File>::ICO_DIR</File>
+  </Resource>
+  <Resource Type=Image Name="Lock">
+    <File>::ICO_LOCK</File>
+  </Resource>
+  <Resource name="screenshot" type="image">
+    <EntryNamed>media</EntryNamed>
+  </Resource>
+
+
+  <Layout Screen="Title">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF6C6C00</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>Loading MXM ...</Constant>
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Menu">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF6C6C00</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="640" h="18" />
+      <Color>0xFFBBBB00</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="380" w="640" h="18" />
+      <Color>0xFFBBBB00</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="87" w="244" h="311" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="443" t="105" w="244" h="205" />
+      <Color>0x33000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="243" t="307" w="396" h="72" />
+      <Color>0x66FFFFFF</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="307" w="244" h="72" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="85" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="104" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="305" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="378" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="Box">
+      <Pos l="0" t="397" w="640" h="3" />
+      <Color>0xFF000000</Color>
+    </LayoutElement>
+    <LayoutElement Type="image" source="screenshot">
+      <Position l="243" t="106" w="200" h="200" />
+      <Scaling x="true" y="false" />
+      <Justify x="left" y="top" />
+      <Proportional>true</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Color>0xFFBBBB00</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Color>0xFFBBBB00</Color>
+      <BorderColor>0x66000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="up">
+      <Pos x="250" y="290" w="20" h="10"/>
+      <Condition>ItemPrev</Condition>
+      <Color>0xFFBBBB00</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Triangle" Direction="Down">
+      <Pos x="270" y="290" w="20" h="10"/>
+      <Condition>ItemNext</Condition>
+      <Color>0xFFBBBB00</Color>
+      <BorderColor>0xFF000000</BorderColor >
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=True />
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Constant>MEDIA X MENU</Constant>
+      <Pos x="236" y="330" w="90"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=False />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="XboxVersion">
+      <Pos x="234" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="234" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+      <Multi>
+        <Text>MXM </Text> 
+        <Text Source="MXMVersion" />
+      </Multi>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="IP">
+      <Pos x="234" y="88" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Audiowire: </Constant>
+<Pos x="310" y="88" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CurrentSong">
+      <Pos L="316" T="88" W="400" H="15"/>
+      <TextColor>0xFF000000</TextColor>
+<Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+    <Proportional>True</Proportional>
+</LayoutElement>
+
+
+    
+<LayoutElement Type="Text" Source="shortdrivecfree">
+      <Pos x="234" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+</LayoutElement>
+<LayoutElement Type="Text">
+      <Pos x="234" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+   <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     <Multi>
+        <Text>D: </Text> 
+        <Text Source="DVDType" />
+</Multi>
+
+          </LayoutElement>
+    <LayoutElement Type="Text" Source="shortdriveefree">
+      <Pos x="234" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="shortdriveffree">
+      <Pos x="234" y="200" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="shortdrivegfree">
+      <Pos x="234" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="TrayState">
+      <Pos x="234" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+
+
+
+    <LayoutElement Type="Text" Source="TempCPU">
+      <Pos x="234" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="TempSys">
+      <Pos x="234" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="DateTime">
+      <Pos x="234" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+    <LayoutElement Type="Text" Source="CurrentSubMenu">
+      <Pos x="250" y="381" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text" Source="Name">
+      <Pos x="447" y="110" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Simplicity Remixed</Constant>
+      <Pos x="447" y="125" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="left" y="top" />
+      <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+    </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Launch Mode: </Constant>
+<Pos x="447" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="LaunchMode">
+<Pos x="527" y="155" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Video Mode:</Constant>
+<Pos x="447" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="VideoStandard">
+<Pos x="520" y="170" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Game Mode: </Constant>
+<Pos x="447" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CGEntryMode">
+<Pos x="523" y="185" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>Kernel: </Constant>
+<Pos x="447" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="KernelVersion">
+<Pos x="488" y="215" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text">
+<Constant>BIOS: </Constant>
+<Pos x="447" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="BIOSName">
+<Pos x="486" y="230" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+<LayoutElement Type="Text" Source="CurrentSoundtrack">
+<Pos x="447" y="260" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text">
+<Constant>Description: </Constant>
+<Pos x="447" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+<LayoutElement Type="Text" Source="CGDescr">
+<Pos x="520" y="275" h="15"/>
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="LEFT" y="top" />
+       <Scaling X=False Y=True />
+      <Proportional>True</Proportional>
+     </LayoutElement>
+
+
+
+
+
+
+
+
+
+    <LayoutElement Type="Menu" Source="MXM">
+      <Pos l="247" t="310" w="327" h="65" />
+      <Scale x="false" y="false" />
+      <Thumbnails Align="left" FolderImg="Folder" PassImg="Lock">true</Thumbnails>
+      <SelPos>0</SelPos>
+      <NumItems>1</NumItems>
+      <MinimumHeight>65</MinimumHeight>
+      <SmoothScroll>True</SmoothScroll>
+      <DrawSecondary>True</DrawSecondary>
+      <ScrollFactor>3</ScrollFactor>
+      <Primary Source="Title">
+        <OffsetY>0</OffsetY>
+        <JustifyX>left</JustifyX>
+      </Primary>
+      <Secondary Source="Descr">
+        <OffsetY>0</OffsetY>
+        <JustifyX>right</JustifyX>
+      </Secondary>
+      <Selection>
+        <TextColor>0xFF000000</TextColor>
+      </Selection>
+      <UnSelItem>
+        <TextColor>0x00000000</TextColor>
+      </UnSelItem>
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Load">
+    <LayoutElement Type="Box">
+      <Pos l="0" t="0" w="640" h="480" />
+      <Color>0xFF6C6C00</Color>
+    </LayoutElement>
+    <LayoutElement Type="Text">
+      <Pos x="320" y="240" />
+      <TextColor>0xFF000000</TextColor>
+      <Justify x="center" y="center" />
+      <Multi>
+        <Text>Loading </Text> 
+        <Text Source="CGTitle" />
+        <Text> ...</Text> 
+      </Multi>
+    </LayoutElement>
+  </Layout>
+
+
+
+  <Layout Screen="Saver">
+    <LayoutElement Type="Text">
+      <Constant>XBOX</Constant>
+      <Pos x="236" y="309" w="90" h="25"/>
+      <TextColor>0xFFFFFFFF</TextColor>
+      <Justify x="right" y="top" />
+      <Scaling X=True Y=True />
+      <Modifier Type="Bounce">
+        <Bounds l="0" t="0" b="480" r="640" />
+      </Modifier>
+    </LayoutElement>
+  </Layout>
+</Skin>
+
+</Skins>
+
+<InfoScreens>
+<layout screen="info01">
+ <LayoutElement Type="Box">
+  <Pos l="0" t="0" w="640" h="480" />
+  <Color>0xFF3E4F62</Color>
+ </LayoutElement>
+ <layoutelement type="text">
+  <proportional>true</proportional> 
+  <doglow>true</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <constant>SYSTEM INFORMATION</constant> 
+  <pos h="24" x="320" y="40" /> 
+  <scale x="true" y="true" /> 
+  <justify x="center" y="top" /> 
+  </layoutelement>
+ <layoutelement source="BIOSName" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="70" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+  </layoutelement>
+ <layoutelement source="KernelVersion" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="70" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+  </layoutelement>
+ <layoutelement source="XboxVersion" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="100" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+  </layoutelement>
+ <layoutelement source="SerialNumber" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="100" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+  </layoutelement>
+ <layoutelement source="TempCPU" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="130" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+  </layoutelement>
+ <layoutelement source="TempSys" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="130" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+  </layoutelement>
+ <layoutelement source="DriveCSize" type="text">
+  <condition>CDrivePresent</condition>
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="160" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+  </layoutelement>
+ <layoutelement type="text">
+  <constant>Drive C: Not Present</constant> 
+  <condition not="true">CDrivePresent</condition>
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffff8080</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="320" y="160" /> 
+  <scale x="true" y="true" /> 
+  <justify x="center" y="top" /> 
+  </layoutelement>
+ <layoutelement source="DriveCFree" type="text">
+  <condition>CDrivePresent</condition>
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="160" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+  </layoutelement>
+ <layoutelement source="DriveESize" type="text">
+  <condition>EDrivePresent</condition>
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="190" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+  </layoutelement>
+ <layoutelement type="text">
+  <constant>Drive E: Not Present</constant> 
+  <condition not="true">EDrivePresent</condition>
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffff8080</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="320" y="190" /> 
+  <scale x="true" y="true" /> 
+  <justify x="center" y="top" /> 
+  </layoutelement>
+ <layoutelement source="DriveEFree" type="text">
+  <condition>EDrivePresent</condition>
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="190" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+ </layoutelement>
+ <layoutelement source="DriveFSize" type="text">
+  <condition>FDrivePresent</condition>
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="220" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+ </layoutelement>
+ <layoutelement type="text">
+  <constant>Drive F: Not Present</constant> 
+  <condition not="true">FDrivePresent</condition>
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffff8080</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="320" y="220" /> 
+  <scale x="true" y="true" /> 
+  <justify x="center" y="top" /> 
+ </layoutelement>
+ <layoutelement source="DriveFFree" type="text">
+  <condition>FDrivePresent</condition>
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="220" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+ </layoutelement>
+ <layoutelement source="DriveGSize" type="text">
+  <condition>GDrivePresent</condition>
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="250" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+ </layoutelement>
+ <layoutelement type="text">
+  <constant>Drive G: Not Present</constant> 
+  <condition not="true">GDrivePresent</condition>
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffff8080</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="320" y="250" /> 
+  <scale x="true" y="true" /> 
+  <justify x="center" y="top" /> 
+ </layoutelement>
+ <layoutelement source="DriveGFree" type="text">
+  <condition>GDrivePresent</condition>
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="250" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+ </layoutelement>
+ <layoutelement source="DateTime" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="280" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+ </layoutelement>
+ <layoutelement source="Name" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="280" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+ </layoutelement>
+ <layoutelement source="VideoStandard" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="310" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+ </layoutelement>
+ <layoutelement source="launchmode" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="310" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+ </layoutelement>
+ <layoutelement source="IP" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="360" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+ </layoutelement>
+ <layoutelement source="MAC" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="360" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+ </layoutelement>
+ <layoutelement source="DefaultGateway" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="390" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+  <multi>
+   <text constant="Gateway:" /> 
+   <text source="defaultgateway" /> 
+  </multi>
+ </layoutelement>
+ <layoutelement source="SubnetMask" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="390" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+  <multi>
+   <text constant="Subnet Mask:" /> 
+   <text source="subnetmask" /> 
+  </multi>
+ </layoutelement>
+ <layoutelement source="DNS1" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="420" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+  <multi>
+   <text constant="DNS1:" /> 
+   <text source="dns1" /> 
+  </multi>
+ </layoutelement>
+ <layoutelement source="dns2" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="420" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+  <multi>
+   <text constant="DNS2:" /> 
+   <text source="dns2" /> 
+  </multi>
+ </layoutelement>
+</layout>
+<layout screen="info02">
+ <LayoutElement Type="Box">
+  <Pos l="0" t="0" w="640" h="480" />
+  <Color>0xFF3E4F62</Color>
+ </LayoutElement>
+ <layoutelement type="text">
+  <proportional>true</proportional> 
+  <doglow>true</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <constant>CURRENT GAME</constant> 
+  <pos h="24" x="320" y="40" /> 
+  <scale x="true" y="true" /> 
+  <justify x="center" y="top" /> 
+  </layoutelement>
+ <layoutelement source="BIOSName" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="70" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+  </layoutelement>
+ <layoutelement source="KernelVersion" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="70" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+  </layoutelement>
+ <layoutelement source="XboxVersion" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="100" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+  </layoutelement>
+ <layoutelement source="SerialNumber" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="100" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+  </layoutelement>
+ <layoutelement source="TempCPU" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="130" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+  </layoutelement>
+ <layoutelement source="TempSys" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="130" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+  </layoutelement>
+ <layoutelement source="DriveCSize" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="160" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+  </layoutelement>
+ <layoutelement source="DriveCFree" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="160" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+  </layoutelement>
+ <layoutelement source="DriveESize" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="190" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+  </layoutelement>
+ <layoutelement source="DriveEFree" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="190" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+ </layoutelement>
+ <layoutelement source="DriveFSize" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="220" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+ </layoutelement>
+ <layoutelement source="DriveFFree" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="220" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+ </layoutelement>
+ <layoutelement source="DateTime" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="250" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+ </layoutelement>
+ <layoutelement source="Name" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="250" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+ </layoutelement>
+ <layoutelement source="VideoStandard" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="280" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+ </layoutelement>
+ <layoutelement source="launchmode" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="280" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+ </layoutelement>
+ <layoutelement source="IP" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="340" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+ </layoutelement>
+ <layoutelement source="MAC" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="340" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+ </layoutelement>
+ <layoutelement source="DefaultGateway" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="370" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+  <multi>
+   <text constant="Gateway:" /> 
+   <text source="defaultgateway" /> 
+  </multi>
+ </layoutelement>
+ <layoutelement source="SubnetMask" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="370" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+  <multi>
+   <text constant="Subnet Mask:" /> 
+   <text source="subnetmask" /> 
+  </multi>
+ </layoutelement>
+ <layoutelement source="DNS1" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="40" y="400" /> 
+  <scale x="true" y="true" /> 
+  <justify x="left" y="top" /> 
+  <multi>
+   <text constant="DNS1:" /> 
+   <text source="dns1" /> 
+  </multi>
+ </layoutelement>
+ <layoutelement source="dns2" type="text">
+  <proportional>true</proportional> 
+  <doglow>false</doglow> 
+  <font>default</font> 
+  <textcolor>0xffffffff</textcolor> 
+  <shadowcolor>0xff000000</shadowcolor> 
+  <pos h="24" x="600" y="400" /> 
+  <scale x="true" y="true" /> 
+  <justify x="right" y="top" /> 
+  <multi>
+   <text constant="DNS2:" /> 
+   <text source="dns2" /> 
+  </multi>
+ </layoutelement>
+</layout>
+</InfoScreens>
+</Internal>

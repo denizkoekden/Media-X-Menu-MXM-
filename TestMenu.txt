@@ -1,0 +1,50 @@
+<Menu>
+<Item>
+ <Title>Test SUB Item 1</Title>
+ <Description>Test Description 1</Description>
+ <Exe>E:\apps\mxm\default.xbe</Exe>
+ <Media>D:\MenuX\sshot\arcticthunder.png</Media>
+</Item>
+<Item>
+ <Title>Test SUB Item 2</Title>
+ <Description>Test Description 2</Description>
+ <Exe>E:\apps\mxm\default.xbe</Exe>
+ <Media>D:\MenuX\sshot\bloodwake.png</Media>
+</Item>
+<Item>
+ <Title>Test SUB Item 3</Title>
+ <Description>Test Description 3</Description>
+ <Exe>E:\apps\mxm\default.xbe</Exe>
+ <Media>D:\MenuX\sshot\gotham.png</Media>
+</Item>
+<Item>
+ <Title>Test SUB Item 4</Title>
+ <Description>Test Description 4</Description>
+ <Exe>E:\apps\mxm\default.xbe</Exe>
+ <Media>D:\MenuX\sshot\fuzion.png</Media>
+</Item>
+<Item>
+ <Title>Test SUB Item 5</Title>
+ <Description>Test Description 5</Description>
+ <Exe>E:\apps\mxm\default.xbe</Exe>
+ <Media>D:\MenuX\sshot\MOTOGP.png</Media>
+</Item>
+<Item>
+ <Title>Test SUB Item 6</Title>
+ <Description>Test Description 6</Description>
+ <Exe>E:\apps\mxm\default.xbe</Exe>
+ <Media>D:\MenuX\sshot\NTHUNDER.png</Media>
+</Item>
+<Item>
+ <Title>Test SUB Item 7</Title>
+ <Description>Test Description 7</Description>
+ <Exe>E:\apps\mxm\default.xbe</Exe>
+ <Media>D:\MenuX\sshot\smashing.png</Media>
+</Item>
+<Item>
+ <Title>Test SUB Item 8</Title>
+ <Description>Test Description 8</Description>
+ <Exe>E:\apps\mxm\default.xbe</Exe>
+ <Media>D:\MenuX\sshot\wreckless.png</Media>
+</Item>
+</Menu>

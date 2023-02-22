@@ -1,0 +1,125 @@
+Strategy for updating
+
+Patch File
+Make backup
+Apply patch
+Verify contents (MD5)
+Rename current to <date>.xxxx.bak
+
+
+Needs to: 
+
+* Identify the program the patch is to be applied to
+  XBE ID and MD5 Hash (Version info for human readability)
+* Provide verification the patch was successful
+  XBE ID and MD5 Hash
+* Identify nature of patch
+  Version to be upgraded, version that results after patching
+* Patch Consists of:
+  Sequence of actions-
+  - CUT: Location, Number Bytes
+  - INSERT: Location, Length, Data
+  - REPLACE: Location, Length, Data (Really Cut and Insert with equal length and location)
+
+
+
+Patch file:
+
+<OriginalXBEID>
+<OriginalMD5>
+<OriginalVersion>
+<OriginalLength>
+<NewXBEID>
+<NewMD5>
+<NewVersion>
+<NewLength>
+<Description>
+<ActionBYTE><LocationDWORD><LengthDWORD>[<DataXXX>]
+
+Must be at least run of 16 bytes to be considered an "intact" data chunk.
+
+Scanning for similar chunks:
+Load both files in memory.
+Begin comparing....
+Upon first dissimilar byte:
+* See if REPLACEMENT from Original is warranted
+   Scan to next similar 'chunk' location wise.
+   If found within 8k, replace
+ * ELSE Look to see if CUT is appropriate
+   can to see if bytes in Original appear within 8k of New
+   If so, perform a CUT
+
+
+
+
+
+
+CXBDialog Class
+
+CreateDialog() (Member of StateApplication)
+Render()
+HandleInput()
+m_clControlList;
+SetFocus()
+OnOK()
+OnCancel()
+OnInitDialog()
+IsActive()
+GlobalAlphaShift()
+AttachControl()
+OnChange(int iCtrlID)
+
+
+Dialog cannot be greater height than 240, to allow for virtual keyboard
+Automatically centers, unless keyboard is active
+
+
+CXBControl Class
+
+CreateControl()
+Render()
+HandleInput()
+HasFocus()
+GetID()
+SetID()
+OnSetFocus()
+OnKillFocus()
+
+Position (relative to dialog)
+
+
+
+Controls:
+
+CXBCtrlButton
+CXBCtrlTextBox (editing and viewing)
+CXBCtrlEditBox (editing single item, not multi-line)
+CXBCtrlNumberBox (Editing number, up/down to adjust value)
+CXBCtrlStringBox (Selecting from list of strings, up/down to change)
+CXBCtrlList (Displays list of items, scrollable)
+CXBCtrlTree (Displays tree view)
+CXBCtrlCheckBox
+CXBCtrlRadioButtonGroup
+ CXBCtrlRadioButton
+
+
+
+Gamepad Controls:
+Left/Right shoulder changes focus between controls
+Left Thumbstick for adjusting Up/Down value controls
+D-Pad for adjusting controls with windows, scrolling up/down/left/right
+Right Thumbstick for moving "mouse"
+White Button to bring up virtual keyboard
+"A" to 'select' in control (will toggle checkboxes either way, too)
+"Start" to activate default button on dialog, or accept
+"Back" to cancel dialog action
+"B" Delete/unselect
+"Y" Toggle Insert
+
+
+
+
+
+
+
+

@@ -1,0 +1,24 @@
+
+
+Action Script
+
+Dim int $Variable
+Dim float $Variable
+Dim string $Variable
+$Variable = something
+$Variable += something
+$Variable -= something
+$Variable *= something
+$Variable /= something
+Copy filepath1 filepath2
+Move filepath1 filepath2
+Erase filepath
+@Prefs section key ...
+@Cfg section key ...
+@Skin section key ...
+@System <name>
+reboot
+powercycle
+poweroff
+IF <variable> Action <ActionName>
+

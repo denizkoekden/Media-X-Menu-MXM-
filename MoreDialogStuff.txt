@@ -1,0 +1,165 @@
+
+/*
+Generic Windows Manager for MXM
+
+
+MessageBox
+ Message
+ MessageWithReboot
+ Progress
+Menu
+ Menu
+Dialog
+
+
+Input types:
+
+Gamepad
+Mouse
+IR Remote
+Keyboard
+VirtualKeyboard
+
+
+
+In DIALOGS:
+
+IR, Mouse and Gamepad can activate virtual keyboard
+
+Window manager will handle rendering and input from virtual keyboard.
+
+GP Right Thumbstick -> Mouse Pointer
+
+Otherwise, D-Pad will jump from item to item, unless in an edit box (jumps if at ends of edit box)
+
+
+Dialog Configuration:
+
+<Dialog Name="Keyboard">
+<Pos Y="200" W="600" H="240" />
+<Control Name="OK" ID="1" Type="pushbutton">
+<Text>OK</Text>
+<Font>Default</Font>
+<Pos Y="0" X="540" H="20" W="20" />
+</Control>
+
+</Dialog>
+
+
+Controls will have:
+Type
+Position, relative to Dialog Rect
+Unique Name
+Unique ID (Optional)
+Text (Optional)
+Default (If "true" button or control will get focus first)
+Font (Optional, if not defined, "default" used)
+
+
+
+Control types (for starters):
+Progress Bar
+- May display user message SetText()
+- Accepts Range and Value SetRange() SetValue()
+
+Static Text
+- May Display user message SetText()
+- Text may contain fields ${stringid,key,section}
+- Justifiable on "X"
+- May be word-wrapped, multiline
+
+Edit Text
+- Has position
+- Accepts focus/input
+  Full keyboard
+  Virtual keyboard support
+  Gamepad Text Entry
+  Remote Text Entry
+
+Radio Button
+
+CheckBox
+
+Button
+
+Image
+
+
+
+
+
+Menu Support for dialogs:
+
+Must have DialogEvents interface to handle return from dialogs
+
+How to launch menus/windows:
+
+MenuState will launch either the Password dialog (if the system menu is protected)
+or go directly to the System Menu
+
+MenuState will get a message from the Password dialog that it's finished and check the reasults, and launch the SystemMenu if OK.
+
+System Menu Handler will also provide a DialogEvents handler. DWORD context pointer will consist of a high-order using the Menu ID, and a Low Order of the Item ID.
+
+As a menu option launches a dialog, the handler will get messages from the dialog and be able to process messages and actions.
+
+For example:
+
+"Rescan Menu"
+->Launches Progress Dialog, Gets Dialog Pointer back
+->Gets progress control from dialog, Sets range and initial value, Forces App Render (PumpRender())
+->Performs Action in loop, Forcing Renders, updating Progress Bar values
+->When finished, closes dialog forceably (CloseWindow())
+
+"Set IP"
+->Launches IP Set dialog
+<-Returns to normal operation
+<-User inputs data into launched dialog
+->Events fires up, Tells MenuHandler it's done
+->Menu Handler gets input, takes care of things, Allows dialog to close
+<-Menu back to original state
+
+
+
+
+New System Menu:
+
+Game Options
+Preferences
+System
+
+About
+
+
+*/
+
+class CXBWindowEvents
+{
+public:
+	CXBWindowEvents();	{};
+	~CXBWindowEvents();	{};
+	bool OnClose( DWORD dwCtx, int DialogID );
+	bool OnUserMessage( DWORD dwCtx, int DialogID, PVOID pParam );
+	bool OnHandleInput( DWORD dwCtx, int DialogID, int iInputType, int iInputIndex, DWORD dwInput );
+}
+
+class CXBWindow
+{	
+
+protected:
+	CXBWindowEvents *		m_pHandler;
+
+	bool InternalHandleInput( void );
+	bool InternalRender( void );
+public:
+	CXBWindow( void );
+	~CXBWindow( void );
+	void SetEventHandler( DWORD dwCtx, CXBWindowEvents * pHandler = NULL );
+	void Render( void );
+	void HandleInput( void );
+	bool HandleMessage( void );
+	void CloseWindow( void );
+	void Display( void );
+};
+
+

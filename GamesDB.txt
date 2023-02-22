@@ -1,0 +1,58 @@
+
+
+
+1. Download updates from the Web to update
+   (Requires URLs)
+
+Handle More than one Xbox!!
+
+Synchronize support on Xboxes?
+
+GamesDB will keep a master list on the user's PC. This will be updated from the master lists available on the web.
+
+
+Game DB will have the following format:
+
+<GamesDB>
+ <0x12345678>
+  <Game>
+   <Size>1765445</Size>
+   <MD5>9f8daa9786948e683b54c4362a436d8c</MD5>
+   <Title>Some Game</Title>
+   <Class>Main</Class>    (Main/Demo/Extra/Extension/Unknown)
+   <Description>Database Description</Description>   (May be multiple entries for this one)
+   <Publisher>Microsoft</Publisher>
+   <Developer>Rare</Developer>
+   <ReleaseYear>2002</ReleaseYear>
+   <ReleaseMonth>9</ReleaseMonth>
+   <Type>Game</Type>     (Game/Utility/Emulator/Homebrew Game)
+   <TenRating>5</TenRating>
+   <DefaultMedia></DefaultMedia>  (May be multiple entries on this one)
+   <DefaultThumb></DefaultThumb>  (May be multiple entries on this one)
+   <DefaultMediaURL></DefaultMediaURL>  (May be multiple entries on this one)
+   <DefaultThumbURL></DefaultThumbURL>  (May be multiple entries on this one)
+   <IsDVDPlayer></IsDVDPlayer>
+   <IsROMPlayer></IsROMPlayer>
+   <AliasID>0x99999999</AliasID>
+   <CmdLine></CmdLine>  (May be multiple entries on this one)
+   <UserStats XboxID="192.168.0.5">
+    <DefDescription>My Own Description</DefDescription>
+    <LaunchCount>453</LaunchCount>
+    <LaunchTimestamp>0x54638393</LaunchTimestamp>
+    <PasscodeEnc>oui4yuEh7738893</PasscodeEnc>
+    <PasscodeMD5>96d74350ee97876b98349a09ef98bd9c9dd</PasscodeMD5>
+    <HDPath>F:\Games\SomeGame\SomeGame.xbe</HDPath>	    
+    <Media>
+    <Thumbnail>
+   </UserStats>
+   
+  </Game>
+ </0x12345678>
+</GamesDB>
+
+Treeview presented to select game to edit
+-By Name
+-By XBE ID
+
+
+

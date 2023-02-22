@@ -1,0 +1,40 @@
+----------------------------------------------------------
+Welcome to the first XBOX Open Source Dashboard
+This idea was initialy conceved whilst in #xboxopensource and while talking to other developers and users.
+
+The idea of releasing the source for existing dashboards doesnt seem to be the goal for the other major dashboards developers so we decided to make out own (the words dolly, pram and throwing come to mind)
+
+So we have a new dashboard?
+In a word, NO, we have only decided to develop one, thats as far as we have got, we have decided on a list of features and they are listed below
+
+What are you going to call the dashboard?
+Not sure at this point in time but my initial thoughts are xDashOS
+
+So what are we planning to do?
+We Will Try & make a new XBOX dashboard with the following features
+
+
+Look and Feel of the MicroSoft dashboard 
+100% Open Source for an increased development user base 
+Set time and Date 
+Set ALL video modes (including PAL -> NTSC) 
+FTP Client with Resume support 
+Built in MP3 audio player 
+SNTP and NTP Time Sync Feature 
+Save Game Manager 
+File Manager 
+DVD -> HD Copy 
+DVD Player (With remote support) 
+DHCP Server and Client 
+Flash Bios option 
+HD Locking and unlocking 
+EEProm backup 
+Auto Update 
+Auto Installer 
+Do you really think you will be able to add all thouse features to a dashboard?
+We are planning to release an initial concept demonstration of the dash with a few fully completed features. However if anybody wants to assist in the development of the features or the intregration please email Open Source XBOX Project 
+*Game launcher 
+*Power off and Reboot 
+*FTP Server with Resume support 
+*Auto Configure (Finds apps and games on HD) 
+----------------------------------------------------------

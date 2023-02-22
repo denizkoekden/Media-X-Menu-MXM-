@@ -1,0 +1,4 @@
+BeginDraw UseCurrent
+MessageBox "This is a test script running from$eol$%0%$eol$Press a button to continue"
+EndDraw
+Input

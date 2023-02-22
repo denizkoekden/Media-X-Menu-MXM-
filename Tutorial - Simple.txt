@@ -1,0 +1,84 @@
+Creating multi-game DVD menus using Media X Menu
+
+1. Determine the games that you will be placing onto a single disc, 
+   with the total size coming to something under 4.3GB in size.
+
+2. Extract the files using xISO or a similar tool into their own 
+   directories (see other tutorials for more details), such that 
+   each game has it's own directories.
+
+
+D:\DNFOREVER
+D:\H2
+D:\MAME
+D:\SPCINVADER3D
+
+   Each game should have an "xbe" file and it's accompanying data files 
+   and directories in each subdirectory created.
+
+3. Create you "ISO" directory. this is the directory where you will 
+   generate your disc image from:
+
+D:\DVD001
+
+4. Place default.xbe from the MXM binaries in this directory and copy the
+   DefaultSkin folder in there as well.
+
+5. In notepad, create a file with the following text:
+
+<Config>
+<Main>
+<DiscTitle>DVD 001</DiscTitle>
+<DiscSubtitle>Collection of games</DiscSubtitle>
+</Main>
+</Config>
+
+   and save the file to the ISO directory as "MXM.xml" (NOTE: include
+   the QUOTES around the filename, so notepad will be forced to place 
+   the file correctly; otherwise it may try and name the file as 
+   mxm.xml.txt, which would be wrong.
+
+6. In each game directory, put an image named "MXM_SS.xxx" where xxx is 
+   the image's extension (JPG, BMP, TGA, GIF, PNG, or WMV) representing
+   a screenshot or movie to be displayed for the game in the menu.
+
+7. For each game, using notepad, create the following entries:
+
+<Config>
+<Item>
+<Title>Game Title</Title>
+<Description>Game Description</Description>
+</Item>
+</Config>
+
+   Common sense says you put the appropriate information in here for each game,
+   and save the file to each game directory (after changing the title and 
+   description) as "MXM_Entry.xml" NOTE: Again with the quotes!! Force 
+   notepad to put the correct extension on it!
+
+8. Now move those game directories into the D:\DVD001 directory you created...
+
+D:\DVD001\
+D:\DVD001\DNFOREVER\
+D:\DVD001\H2\
+D:\DVD001\MAME\
+D:\DVD001\SPCINVADER3D\
+
+   ...and you should be ready to build your disc image from the files and 
+   directories from D:\DVD001 and below.
+
+9. Create your ISO using GDFIMAGE or IsoMaker or similar tools for XDFS, or 
+   simply drag them to Prassi PrimoDVD or RecordNow Max to create a UDF image
+   It should look like this:
+
+default.xbe
+mxm.xml
+\DefaultSkin\
+\DNFOREVER\
+\H2\
+\MAME\
+\SPCINVADER3D\
+
+   when the image is build on the disc. Each of the game directories will also 
+   have their own MXM_Entry.xml and MXM_SS.* files 
+

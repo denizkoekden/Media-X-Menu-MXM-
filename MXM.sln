@@ -1,0 +1,56 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MXM", "MXM.vcproj", "{3FB77B3E-A17F-405B-AC4D-FF1599EC87C3}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BinTree", "BinTree\BinTree.vcproj", "{5DFF4B1D-3E0C-453E-AD0F-78B2EF686FD0}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BasicTest", "BasicTest\BasicTest.vcproj", "{B6BBE01E-B2F3-4739-B51B-CCB756F9E40C}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProjectedTexture", "..\..\Program Files\Microsoft Xbox SDK\Samples\Xbox\Graphics\ProjectedTexture\projectedtexture.vcproj", "{652C7D60-BC02-4E09-96DD-9300FFFF0012}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameDB", "GameDB\GameDB.vcproj", "{6CB0F4EB-08F8-4CD4-A9A6-4B07C16FF0C0}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+		Release with Debug Info = Release with Debug Info
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{3FB77B3E-A17F-405B-AC4D-FF1599EC87C3}.Debug.ActiveCfg = Debug|Xbox
+		{3FB77B3E-A17F-405B-AC4D-FF1599EC87C3}.Debug.Build.0 = Debug|Xbox
+		{3FB77B3E-A17F-405B-AC4D-FF1599EC87C3}.Release.ActiveCfg = Release|Xbox
+		{3FB77B3E-A17F-405B-AC4D-FF1599EC87C3}.Release.Build.0 = Release|Xbox
+		{3FB77B3E-A17F-405B-AC4D-FF1599EC87C3}.Release with Debug Info.ActiveCfg = Release with Debug Info|Xbox
+		{3FB77B3E-A17F-405B-AC4D-FF1599EC87C3}.Release with Debug Info.Build.0 = Release with Debug Info|Xbox
+		{5DFF4B1D-3E0C-453E-AD0F-78B2EF686FD0}.Debug.ActiveCfg = Debug|Win32
+		{5DFF4B1D-3E0C-453E-AD0F-78B2EF686FD0}.Release.ActiveCfg = Release|Win32
+		{5DFF4B1D-3E0C-453E-AD0F-78B2EF686FD0}.Release with Debug Info.ActiveCfg = Release|Win32
+		{5DFF4B1D-3E0C-453E-AD0F-78B2EF686FD0}.Release with Debug Info.Build.0 = Release|Win32
+		{B6BBE01E-B2F3-4739-B51B-CCB756F9E40C}.Debug.ActiveCfg = Debug|Win32
+		{B6BBE01E-B2F3-4739-B51B-CCB756F9E40C}.Release.ActiveCfg = Release|Win32
+		{B6BBE01E-B2F3-4739-B51B-CCB756F9E40C}.Release with Debug Info.ActiveCfg = Release|Win32
+		{B6BBE01E-B2F3-4739-B51B-CCB756F9E40C}.Release with Debug Info.Build.0 = Release|Win32
+		{652C7D60-BC02-4E09-96DD-9300FFFF0012}.Debug.ActiveCfg = Debug|Xbox
+		{652C7D60-BC02-4E09-96DD-9300FFFF0012}.Release.ActiveCfg = Release|Xbox
+		{652C7D60-BC02-4E09-96DD-9300FFFF0012}.Release with Debug Info.ActiveCfg = Release|Xbox
+		{652C7D60-BC02-4E09-96DD-9300FFFF0012}.Release with Debug Info.Build.0 = Release|Xbox
+		{6CB0F4EB-08F8-4CD4-A9A6-4B07C16FF0C0}.Debug.ActiveCfg = Debug|Win32
+		{6CB0F4EB-08F8-4CD4-A9A6-4B07C16FF0C0}.Release.ActiveCfg = Release|Win32
+		{6CB0F4EB-08F8-4CD4-A9A6-4B07C16FF0C0}.Release with Debug Info.ActiveCfg = Release|Win32
+		{6CB0F4EB-08F8-4CD4-A9A6-4B07C16FF0C0}.Release with Debug Info.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

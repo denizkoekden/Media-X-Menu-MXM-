@@ -1,0 +1,237 @@
+
+Understanding Skin Selection in MXM 1.0:
+
+On start up, one skin is selected by MXM for use while MXM is running.
+
+What skin, and where it can load them from, depends on several factors.
+
+Wherever MXM is run from, it will immediately catalog all of the immediate subdirectories containing a skin definition file (MXM_SkinDef.xml).
+For compatibility, it will also catalog all directories containing MXM_Skin.xml files.
+
+In the persistent configuration (on hard disk), the user may specify a number of skin directories or specific skin locations:
+
+<Main>
+ <SkinSettings>
+  </SkinDir Value="F:\MXM\Skins">
+  </SkinFile Value="F:\SpecialSkin\MXM_SkinDef.xml">
+  </AlwaysUseSystemSkins Value="on">
+ </SkinSettings>
+</Main>
+
+"AlwaysUseSystemSkins" options determines if MXM will load from the DVD as well as local sources.
+This is overruled when: No "system" skins exist, when a specific skin is selected by the MXM.xml, or when overridden by the MXM.xml with the "AlwaysUseLocalSkins" option.
+
+
+----------------------------
+System Skins vs. Local Skins
+----------------------------
+System skins are skins typically residing on the hard drive, specified by the persistant configuration.
+Local skins are those skins residing where MXM will automatically find them, or otherwise specified by the MXM.xml file.
+
+
+
+
+Complex Skinning in MXM
+
+Skinning in MXM will encompass the design of the individual screens that comprise the MXM menuing system. These screens include the following:
+
+Title
+GameMenu
+Thumbnail
+Loading
+MXMHelp
+GameHelp
+
+
+Each of these screens will be defined by a "Layout" containing one or more "LayoutElements"
+
+LayoutElements are comprised of Images, Text, or specially defined elements.
+
+Resources may be Cached, or Dynamic. All fonts are Cached. Images may be Cached or Dynamic, depending on the source.
+
+
+
+<Skin Name=CMX>
+<Information>
+</Version Value="1.0">
+<Author>John Doe</Author>
+<Copyright>2003</Copyright>
+</Information>
+<Resource Type=Font Name="Halo" File="Halo.xpr"/>
+<Resource Type=Font Name="Xbox" File="Xbox.xpr"/>
+<Resource Type=Font Name="SmallFont" File="Font10.xpr"/>
+<Resource Type=Font Name="NormalFont" File="Font16.xpr"/>
+<Resource Type=Font Name="GameText" File="GameText.xpr"/>
+<Resource Type=Image Name="Title" File="TitleScr.jpg"/>
+<Resource Type=Image Name="MenuBack" File="MenuScr.jpg"/>
+<Resource Type=Image Name="Loading" File="LoadScr.jpg"/>
+<Resource Type=Image Name="ThumbBack" File="ThumbScr.jpg"/>
+<Layout ID=Title>
+<LayoutElement Type=Image Source=Cached>
+<SrcLoc Val=Title />
+<Pos T=0 H=480 L=0 W=640/>
+<DefColor ARGB=0xff000000 Point=Bottom/>
+<DefColor ARGB=0xff0000ff Point=Top/>
+</LayoutElement>
+<LayoutElement Type=Text Font=Xbox>
+<SrcLoc Val=TitleDescr/>
+<Color ARGB=0xffffffff/>
+<Pos X=320 Y=240/>
+<Justify X=Center Y=Center/>
+</LayoutElement>
+<LayoutElement Type=Text Font=Xbox>
+<SrcLoc Val=SubTitleDescr/>
+<Color ARGB=0xffffffff/>
+<Pos X=320 Y=270/>
+<Justify X=Center Y=Center/>
+</LayoutElement>
+</Layout>
+<Layout ID=ThumbNail>
+<LayoutElement Type=Image Source=Cache>
+<SrcLoc Val=ThumbBack/>
+<Pos T=0 H=480 L=0 W=640/>
+</LayoutElement>
+</Layout>
+<Layout ID=Loading>
+<LayoutElement Type=Image Source=Cache>
+<SrcLoc Val=Loading/>
+<Pos T=0 H=480 L=0 W=640/>
+</LayoutElement>
+<LayoutElement Type=Text Font=Xbox>
+<SrcLoc Val=CurGameTitle/>
+<Color ARGB=0xffffffff/>
+<Pos X=320 Y=240/>
+<Justify X=Center Y=Center/>
+<ShadowColor ARGB=0x80000000/>
+</LayoutElement>
+</Layout>
+<Layout ID=MXMHelp>
+<LayoutElement Type=Image Source=Dynamic>
+<SrcLoc Val=CurMXMHelp/>
+<Pos T=0 H=480 L=0 W=640/>
+</LayoutElement>
+</Layout>
+<Layout ID=GameHelp>
+<LayoutElement Type=Image Source=Dynamic>
+<SrcLoc Val=CurGameHelp/>
+<Pos T=0 H=480 L=0 W=640/>
+</LayoutElement>
+<Layout ID=GameMenu>
+<LayoutElement Type=Image Source=Cache>
+<SrcLoc Val=MenuBaCK/>
+<Pos T=0 H=480 L=0 W=640/>
+</LayoutElement>
+<LayoutElement Type=Image Source=Dynamic SubSource=CurGame>
+<SrcLoc Val=Screenshot/>
+<Pos T=120 H=193 L=334 W=260/>
+</LayoutElement>
+<LayoutElement Type=Special Source=BorderBox>
+<Color ARGB=0x80000000/>
+<BorderColor ARGB=0xffffff00/>
+<Pos T=100 H=200 L=63 W=230/>
+</LayoutElement>
+<LayoutElement Type=Special Source=GameMenu>
+<SrcLoc Val=Screenshot/>
+<Pos T=100 H=200 L=63 W=230/>
+<SelColor ARGB=0xff000000/>
+<SelBoxColor ARGB=0xffffff00/>
+<UnselColor ARGB=0xff808000/>
+<MaxTitleChars Val=20/>
+<Orient Val=UpDown/>
+<ShowDescr Val=True/>
+<TitleFont Val=NormalFont/>
+<DescrFont Val=SmallFont/>
+</LayoutElement>
+</Layout>
+</Skin>
+
+
+
+
+
+LayoutElement
+ Attributes:
+  -Type (Image, Text, Special)
+  -Source (Cached, Dynamic)
+  -Base (MXMPath, ConfigPath, CurGamePath)
+  -Cond (??)
+ Elements:
+  -SrcLoc
+   Cache/special name
+  -SrcFile
+  -Pos
+  -Size
+  -Width
+  -Height
+  -Top
+  -Left
+  -Right
+  -Bottom
+  -DefColor (ARGB or A,R,G,B), Point=Top, Bottom, Left, Right, or corners
+  -Text
+  -Justify (Y=Center, Top, Bottom X=Center, Left, Right)
+  -Shadow
+  -ShadowColor
+  -Color
+
+Specials:
+
+GameMenu
+
+
+
+Special Items handling:
+
+
+
+
+Image cacheing:
+Store up to XXX bytes of data in a memory buffer.
+
+class CCacheItem
+{
+public:
+    DWORD m_dwTimeStamp;
+    int   m_iPriority;
+    CStdString m_strFilePath;
+    PBYTE m_pbyBuffer;
+};
+
+class CImageCache
+{
+}
+
+Images have Source=Cache and Dynamic
+Subsource CurGame or 
+
+Special Image Fields:
+PrevArrowUp_gm
+NextArrowDn_gm
+PrevArrowLf_gm
+NextArrowRt_gm
+
+
+Source=Cache, SrcLoc=(resource name)
+
+
+Special Text Fields supported in 0.9g (SrcLoc):
+DiscTitle
+DiscSubtitle
+CurGameTitle
+CurGameDesc
+CurGamePath
+SkinAuthor
+SkinVersion
+SkinCopyright
+
+
+
+
+
+
+
+
+
+
+
+

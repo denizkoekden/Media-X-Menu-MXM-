@@ -1,0 +1,259 @@
+RenderGadgets referece
+
+
+Understanding the MXM boot process
+
+Initialization:
+ Determine if running as a dashboard
+ Examine patch key for initial settings
+ Initialize application
+  Initialize 3D world
+  Begin InitScreen animation thread
+  Initialize State Application
+  Create Default Font entry in Font cache ("default" and "font16")
+  Finish Initialization
+   Perform Symbolic Linking
+   Scan Subdirectories and put them into a string list
+   Check to see if we are in "XDI" mode (if running from DVD)
+   -Must have MenuX\menu.xdi file
+   -Must be lacking a proper MXM.xml file
+   If not in XDI mode, Prepare a default display skin setup
+    Load Menu Entries from MXM.xml file
+    If AllowAutoConfig, Scan immediate subdirectories for entries
+	If no entries, just locate the dashboards and set them as entries.
+   If XDI mode
+    Build XDI skin (and for now, configure it)
+   Load Skins
+   Initialize soundtrack
+   Check to see if we need to install our titleimage.xbx and stick it out there if needed
+   Add AppStates (Set Title or Menu, depending on setting of TitleDelay
+
+
+LoadEntries()
+ If XDI mode, read XDI entries
+ ELSE 
+   If MXM.xml exists, read entries
+ If AllowAutoConfig (or item count==0), check immediate subdirectories
+
+Internal XML to track menu entries:
+
+Menu.xml files:
+
+<Menu Title="Main">
+ <Item>
+ </Item>
+ <SubMenu Title\"">
+  <Item>
+  </Item>
+ </SubMenu>
+</Menu>
+
+LoadMenu( CXMLNode * pMenuNode )
+
+
+<Item>
+ <Title>Something</Title>
+ <SubMenu></SubMenu>
+ <SubMenuAutoDir></SubMenuAutoDir>
+ <AutoDir></AutoDir>
+</Item>
+  
+  
+<Menu>
+ <Item>
+  <Title>Some App</Title>
+  <Exe>F:\Apps\SomeApp\default.xbe</Exe>
+  <Media>F:\Apps\SomeApp\SomePic.jpg</Media>
+ </Item>
+ <SubMenu>
+  <Item>
+  </Item>
+  <Item>
+   <MenuFile>File</MenuFile>
+  </Item>
+ </SubMenu>
+  
+
+
+Handling Menu Entries:
+ Parse MXM.xml
+ Load from menu.xdi
+ Parse AutoConfig
+  
+   
+
+
+Image Cache
+Texture Cache
+Font Cache
+
+
+Resources
+
+
+Fonts (XPR bundled format):
+
+<Resource name="somename" type=Font>
+ <File>relativefilepathname</File>
+</Resource>
+
+
+Images:
+<Resource name="somename" type=Image >
+ <Entry>MXM_SS.jpg</Entry>
+ <EntryNamed>Media</EntryNamed>
+ <EntryBaseName>MXM_SS</EntryBaseName>
+ <EntryIndex>MXM_HLP%02d</EntryIndex>
+ <File>MenuBack.jpg</File>
+ <FileIndex>filepath%02d</FileIndex>
+ <FileBaseName>MenuBack</FileBaseName>
+</Resource>
+
+
+Menu::MenuX
+
+<LayoutElement [name=""] type=Menu Source=MenuX>
+ <pos [x=] [y=] [t=] [l=] [h=] [w=]/>
+ <justify [x=right|left|center] [y=top|bottom|center]/>
+ <scale [x=true|false] [y=true|false]/>
+ <TitleFont>fontname</TitleFont>
+ <DescrFont>fontname</DescrFont>
+ <TitleSquash>-4</TitleSquash>
+ <DescrSquash>-4</DEscrSquash>
+ <ThrobPeriod>5000</ThrobPeriod>
+ <SelColor>
+ <ArrowColor>
+ <MenuColor>
+ <DrawDesc>
+</LayoutElement>
+
+Menu::MXM
+
+<LayoutElement [name=""] type=Menu Source=MXM>
+ <pos [x=] [y=] [t=] [l=] [h=] [w=]/>
+ <scale [x=true|false] [y=true|false]/>
+ <Justify [x=right|left|center] [y=top|bottom|center]/>
+ <DrawSecondary>true|false</DrawSecondary>
+ <SmoothScroll>true|false</SmoothScroll>
+ <ScrollFactor>3</ScrollFactor>
+ <Primary>
+  <Font>fontname</Font>
+  <Source>Title</Source>
+  <OffsetY>0</OffsetY>
+  <JustifyX>right|left|center</JustifyX>
+ </Primary>
+ <Secondary>
+  <Font>fontname</Font>
+  <Source>Title</Source>
+  <OffsetY>0</OffsetY>
+  <JustifyX>right|left|center</JustifyX>
+ </Secondary>
+ <Selection>
+  <TextColor>0xFFFFFFFF</TextColor>
+  <ShadowColor>0xFF000000</ShadowColor>
+  <BackColor>0</BackColor>
+  <BorderColor>0</BorderColor>
+  <DoGlow>true|false</DoGlow>
+  <ShadowSize>2</ShadowSize>
+  <Secondary>
+   <TextColor>0xFFFFFFFF</TextColor>
+   <ShadowColor>0xFF000000</ShadowColor>
+   <BackColor>0</BackColor>
+   <BorderColor>0</BorderColor>
+   <DoGlow>true|false</DoGlow>
+   <ShadowSize>2</ShadowSize>
+  </Secondary>
+ </Selection>
+ <UnselItem>
+  <TextColor>0xFFFFFFFF</TextColor>
+  <ShadowColor>0xFF000000</ShadowColor>
+  <BackColor>0</BackColor>
+  <BorderColor>0</BorderColor>
+  <DoGlow>true|false</DoGlow>
+  <ShadowSize>2</ShadowSize>
+  <Secondary>
+   <TextColor>0xFFFFFFFF</TextColor>
+   <ShadowColor>0xFF000000</ShadowColor>
+   <BackColor>0</BackColor>
+   <BorderColor>0</BorderColor>
+   <DoGlow>true|false</DoGlow>
+   <ShadowSize>2</ShadowSize>
+  </Secondary>
+ </UnselItem>
+</LayoutElement>
+
+Box::
+<LayoutElement [name=""] type=String Source=CGTitle>
+ <pos [x=] [y=] [t=] [l=] [h=] [w=]/>
+ <justify [x=right|left|center] [y=top|bottom|center]/>
+ <TextColor>
+ <BackColor>
+ <BorderColor>
+</LayoutElement>
+
+
+String::
+
+<LayoutElement [name=""] type=String Source=CGTitle>
+ <pos [x=] [y=] [t=] [l=] [h=] [w=]/>
+ <justify [x=right|left|center] [y=top|bottom|center]/>
+ <scale [x=true|false] [y=true|false]/>
+ <Constant>Some String</Constant>
+ <DoGlow>
+ <TextColor>
+ <ShadowColor>
+ <ShadowSize>
+</LayoutElement>
+
+ImageSource::
+
+<LayoutElement [name=""] type=ImageSource Source=CGScreenShot>
+ <pos [x=] [y=] [t=] [l=] [h=] [w=]/>
+ <justify [x=right|left|center] [y=top|bottom|center]/>
+ <scale [x=true|false] [y=true|false]/>
+</LayoutElement>
+
+Arrow::
+<LayoutElement [name=""] type=Arrow Source=Left>
+ <pos [x=] [y=] [t=] [l=] [h=] [w=]/>
+ <justify [x=right|left|center] [y=top|bottom|center]/>
+ <scale [x=true|false] [y=true|false]/>
+ <ArrowColor>
+ <TailPart>50</TailPart>
+ <TailThick>80</TailThick>
+ <Conditional Up=true>
+</LayoutElement>
+
+Conditionals:
+
+Up
+  When true, only displays item when the currently selected game is greater than 0
+
+NotUp
+  When true, only displays item when the currently selected game is 0
+
+Down
+  When true, only displays item when the currently selected game is not the last item
+
+NotDown
+  When true, only displays item when the currently selected game is the last item
+
+
+
+Modifiers:
+
+ <Modifier Type=AlphaFlicker Target=ShadowColor>
+  <Min>192</Min>
+  <Max>255</Max>
+ </Modifier>
+ <Modifier Type=AlphaThrob Target=TextColor>
+  <Period>2000</Period>
+  <Min>192</Min>
+  <Max>255</Max>
+ </Modifier>
+ <Modifier Type=Tremor Target=Pos>
+  <Amount>4</Amount>
+ </Modifier>
+ <Modifier Type=Pulse Target=Pos>
+  <Amount>4</Amount>
+ </Modifier>

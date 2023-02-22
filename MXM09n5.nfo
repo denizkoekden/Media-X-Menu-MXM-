@@ -1,0 +1,156 @@
+September 25 2003
+
+Media X Menu 0.9n.5
+
+Please stop by the forums at Xbox-Scene.com to report any issues in the MXM forum.
+
+Tutorials located at:  http://www.writersgallery.com/MXM/TUT
+
+Short Version-
+[*] Revamped the FTP Server. More robust.
+[*] ActionScripts  - Think "DOS Batch Language" on steroids.
+[*] Partition Formatting
+[*] G: Support
+[*] PAL/NTSC switching with PAL60 support and independent Region Selection
+[*] Built in "Recovery Disc" support for NEW Hard Drives.
+If run from a CD-RW or DVDR/RW, upon detecting a "fresh" unformatted HD, MXM will offer to format the partitions and then copy the contents of CBackup, EBackup, FBackup, and GBackup, if present, to their respective drives.
+[*] Fixed numerous annoying bugs
+[*] Added time offset for time synchronization
+[*] Fanspeed support in ActionScripts
+
+See below for complete list.
+
+
+Beta 0.9n.5 (Bug Fixes)
+[*]  Fixed Music Enable
+[*] Checked Enable Global Music - works on my test machine
+[*] Added "Enable Network" to configuration menus.
+[*] Explaination of the <Action> tag to add your own "Systme" commands to the 'regular' menus:
+  Instead of defining an "Exe" You define an Action for the item:
+  <Item>
+  <Action>trayopen</Action>
+  <Title>Open DVD Tray</Title>
+  <Thumbnail>::ICO_ACTION</Thumbnail>
+  <Media>::ICO_ACTION</Media>
+  </Item>
+  Actions currently available:
+  - ResetMenuCache
+  - trayopen
+  - trayclose
+  - reboot
+  - shutdown
+  - PowerCycle
+  More will follow
+[*] Totally new FTP server code. Should be no more hangups... you can now ABOR during transfers.
+[*] Recognizes "G:" drive
+[*] Toggle for "Action..." menu (Formarly "System..." but confusing name with "Y" menu)
+[*] Hard drive Formatting!
+  - SITE commands:
+     FORMAT C:
+     FORMAT E:
+     FORMAT F:
+     FORMAT G:
+     FORMAT X:
+     FORMAT Y:
+     FORMAT Z:
+   Of course, use these at your own risk!!
+   As usual, these SITE commands can also be used in ACTION menu items
+   Requires a toggle of the configuration menu (Misc settings) before first usage.
+[*] Drive-related Strings have "G" equivalents now.
+[*] Conditionals: cdrivepresent, edrivepresent, fdrivepresent, gdrivepresent
+[*] Added "not" attribute to conditionals, for testing OPPOSITE condition. To use, set not="true"
+    i.e.: <condition not="true">GDrivePresent</condition>
+[*] Added "fanspeed" gadget string.
+[*] Added
+    ATTR <FileOrDir> ro|rw
+    CHMOD 777 <FileOrDir>   (This command is compatible with FlashFXP's "Attributes" action)
+    LaunchDVD
+    EEPROMBackup [Filename] (Backs up EEPROM contents, encrypted, to a file, file defaults to "eeprom.bin" in current directory)
+    EEPROMRestore [Filename] (Restores EEPROM contents, encrypted, from a file, file defaults to "eeprom.bin" in current directory)
+    MKDIR <PATH>
+    RMDIR <PATH> <CASCADE>
+    CD <PATH> (GUI only, sets default directory, which starts as MXM's path)
+    COPY <Path/File/Wildcard> <Path/File>
+    RENAME <FileOrPath> <FileOrPath>
+    DELETE <File>
+    :<Label>
+    GOTO <Label>
+    SYSTEMMENU <Activate|Hide|Unhide|ActivateFull>
+    MESSAGEBOX <message> (Displays a message box AFTER script is done executing, or if used between BeginDraw and EndDraw, renders a message box)
+    SET <VarName> <Value>  
+    ADD <VarName> <Value>
+    SUB <VarName> <Value>
+    DIV <VarName> <Value>
+    MULT <VarName> <Value>
+    IF <arg1> <op> <arg2> goto <label>
+    -<op>:
+     - =
+     - >
+     - <
+     - >=
+     - <=
+     - != or <>
+     - ##   (True if LValue contains RValue)
+     - #^   (Same as ##, but case insensitive)
+     - !##   (True if LValue doesn't contain RValue)
+     - !#^   (Same as !##, but case insensitive)
+     IF# (Used to evaluate numerically)
+    SETFANSPEED <Manual|Default> <speed>
+    SETFUNC <VarName> <Function> <Function Arguments>
+     -Functions:
+     - XBETITLE <FileName>
+     - XBEID <FileName>
+     - FILESIZE <FileOrPath>
+     - FILEEXIST <FileOrPath>
+     - PATHEMPTY <Path>
+     - LEFT <Count> <Text>
+     - RIGHT <Count> <Text>
+     - MID <Count> <Length> <Text>
+     - SPACE <Count>
+     - REPEAT <Count> <Text>
+     - LENGTH <Text>
+     - TRIM <Text>
+     - TRIMLEFT <Text>
+     - TRIMRIGHT <Text>
+     - LOWER <Text>
+     - UPPER <Text>
+     - CONDITION or COND <conditional>    (Sets value to 1 or 0, depending on state of skin conditional)
+     - !CONDITION of !COND <conditional>
+    EXEC <xbe> [<args>]
+    BEGINDRAW [USeCurrent]    (Starts rendering a screen, "UseCurrent" grabs the previously rendered screen to display)
+    ENDDRAW   (Displays screen)
+    INPUT    (See ActionScript ReadMe for details on return variables set)
+    CALLFILE <file> <Args...>
+    CALLSCRIPT <name> <Args...>
+    BOX <X> <Y> <Width> <Height> [<Color>] [<BorderColor>]
+    TEXT <X> <YTOP> <CENTER|LEFT|RIGHT> <Text> [<Color>]
+    ALLOWFORMAT <1|0>
+    MOUNT <Drive:> [<DevicePartitionPath>]
+    DATE <Day> <Month> <Year>
+    TIME <00:00>
+    DELAY <Delay Sec>
+    DELAYMS <Delay ms>
+[*] Add "CherryPatch" - Yes, Thank you Cherry for your PAL/NTSC code. It's EEPROM safe, so you should be OK with a simple reboot.
+    With this patch, the PAL/PAL60/NTSC switching code is reimplemented!! It's improved, though, as there is now support for PAL60
+    and USA/JAP/EUR region coding as well.
+[*] ActionScripts can be loaded internally from the MXM.xml file - define them in a <Scripts> node, with each script:
+<ActionScript name=somename">
+...script here...
+</ActionScript>
+and
+<ActionScriptLoad name=somename">loadable.xas</ActionScriptLoad>
+Loads form the disk, relative to the MXM.xml file
+[*] MXM will execute "AutoExec" scripts - 
+1) First, it runs an internally defined script, _AutoExec
+2) It runs a user-defined script, AutoExec, as defined in the MXM.xml
+3) If it exists, it will run "AutoExec.xas" from the MXM directory.
+[*] Colors can either be the named versions, or ARGB values (0xFF001122, for example)
+[*] Special ActionScript symbols, $eol$, $lt$ and $gt$
+[*] Fixed passcode usage with SubMenus and ActionScripts. Also cleaned up rendering
+so the passcode is not revealed once passed by the fade-in.
+[*] Cleaned up the way the Dashboards menu option works. Much nicer now ;)
+[*] Added "DVD Player Preference" to select a preferred player (Default, X2, or M$)
+[*] Users can add "Context menus" for games. These are actionscripts defined in a <Context> node in MXM.xml - 
+The scripts have some awareness of the currently selected game, and can act on them.
+[*] Added "TimeSynch Offset" in hours for those using non-local time servers.
+

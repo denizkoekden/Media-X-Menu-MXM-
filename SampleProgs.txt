@@ -1,0 +1,20 @@
+for a=0 to 10
+print a;
+next a
+
+for z=0 to 30
+if z<5 then print "#"
+print "*"
+next z
+
+
+
+100 FOR L = 1 TO 10
+110 IF L < 5 THEN X=X+1: GOTO 130
+120 Y=Y+1
+125 PRINT L
+130 NEXT L
+140 PRINT "HEADS="
+PRINT X
+150 PRINT "TAILS= "
+PRINT Y
